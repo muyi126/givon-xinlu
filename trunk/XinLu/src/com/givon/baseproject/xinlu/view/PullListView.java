@@ -16,6 +16,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.MeasureSpec;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.AbsListView;
@@ -92,6 +93,7 @@ public class PullListView extends ListView implements OnScrollListener {
 				getViewTreeObserver().removeGlobalOnLayoutListener(this);
 			}
 		});
+		resetHeaderHeight();
 	}
 
 	@Override
@@ -172,6 +174,16 @@ public class PullListView extends ListView implements OnScrollListener {
 		setSelection(0);
 	}
 
+	
+//	@Override
+//	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+//		// TODO Auto-generated method stub
+////		/**
+////		 * 设置不滚动
+////		 */
+//		int expandSpec = MeasureSpec.makeMeasureSpec(Integer.MAX_VALUE >> 2, MeasureSpec.AT_MOST);
+//		super.onMeasure(widthMeasureSpec, expandSpec);
+//	}
 	private void resetHeaderHeight() {
 		int height = mHeaderView.getVisiableHeight();
 		if (height == 0) {

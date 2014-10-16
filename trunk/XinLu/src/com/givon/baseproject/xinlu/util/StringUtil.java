@@ -11,6 +11,9 @@
 package com.givon.baseproject.xinlu.util;
 
 import java.text.DecimalFormat;
+import java.util.List;
+
+import com.alibaba.fastjson.JSON;
 
 import android.content.Context;
 import android.content.Intent;
@@ -100,6 +103,18 @@ public class StringUtil {
 			}
 			return key;
 		}
+		
+		
+		 public static Object string2Class(String data,Class classz){
+			 try {
+				 Object obj = JSON.parseObject(data, classz);
+				 return obj;
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+			 
+		 }
 		
 		public static String double2String(double d){
 //			 DecimalFormat df0 = new DecimalFormat("###");
