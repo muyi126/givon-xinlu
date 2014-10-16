@@ -10,6 +10,7 @@
 
 package com.givon.baseproject.xinlu;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -17,7 +18,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -28,7 +28,7 @@ import com.givon.baseproject.xinlu.view.AppDialog.Builder;
 import com.givon.baseproject.xinlu.view.AppTitleBar;
 import com.givon.baseproject.xinlu.view.WaitingDialog;
 
-public abstract class BaseActivity extends FragmentActivity {
+public abstract class BaseActivity extends Activity {
 
 	private BroadcastReceiver mBroadcastReceiver;
 	public AppTitleBar mTitleBar;
@@ -52,6 +52,8 @@ public abstract class BaseActivity extends FragmentActivity {
 		initLayoutView();
 	}
 
+	
+	
 	@Override
 	protected void onStart() {
 		super.onStart();
