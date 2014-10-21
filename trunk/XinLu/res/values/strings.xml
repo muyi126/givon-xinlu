@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">BaseProject</string>
+    <string name="app_name">足迹</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="text_submit">提交</string>
@@ -25,5 +25,17 @@
     <string name="ptr_release_to_refresh">Release to refresh</string>
     <string name="ptr_loading">Loading</string>
     <string name="ptr_last_updated">Updated: %1$s</string>   
+    <string name="regist">注册</string>
+    <string name="regist_tip_code_sended">短信/邮箱验证码已发送...</string>
+    <string name="regist_tip_regetcode_60">s后从新获取</string>
+    <string name="regist_tip_regetcode">重新获取</string>
+    <string name="regist_input_code">输入验证码</string>
+    <string name="toast_no_intent">没有连接到网络</string>
+    <string name="regist_input_phone">请输入正确的号码</string>
+    <string name="login_input_pwd">请输入正确的密码</string>
+    <string name="login_input_pwd_lengtherror">密码长度大于6位</string>
+    <string name="regist_input_username">用户名不能为空</string>
+    <string name="login_input_email_error">邮箱错误</string>
+    <string name="regist_input_phone_error">手机号码错误</string>
 
 </resources>

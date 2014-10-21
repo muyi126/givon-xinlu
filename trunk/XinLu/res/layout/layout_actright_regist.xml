@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    <RelativeLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dip"
+        >
+        <com.givon.baseproject.xinlu.view.RoundImageView 
+            android:id="@+id/rv_header"
+            android:layout_width="60dip"
+            android:layout_height="60dip"
+            android:src="@drawable/ic_launcher"
+            android:scaleType="fitXY"
+            android:layout_centerInParent="true"
+            />
+        <TextView 
+            android:layout_below="@+id/rv_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="设置个人头像"
+            android:layout_centerHorizontal="true"
+            />
+    </RelativeLayout>
+    <RelativeLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+    <com.givon.baseproject.xinlu.view.MySetPassWordEditView
+        android:id="@+id/et_setPassWord"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dip"
+        android:layout_marginRight="15dip"
+       	android:text="asdasds"
+        android:paddingLeft="80dip"
+        />
+    <CheckBox 
+        android:id="@+id/mima_Check"
+        android:layout_alignRight="@id/et_setPassWord"
+        android:layout_centerVertical="true"
+        style="@style/MimaCheckboxTheme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+    
+    </RelativeLayout>
+    
+    <EditText 
+        android:layout_marginLeft="15dip"
+        android:layout_marginRight="15dip"
+        android:id="@+id/et_nikename"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+    
+    <RelativeLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dip"
+        android:layout_marginRight="15dip"
+        >
+        <TextView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="性别"
+            />
+         <CheckBox
+            android:id="@+id/ck_boyCheck"
+            android:layout_width="24dip"
+            android:layout_height="24dip"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="50dip"
+            android:background="@drawable/selector_ordercheck_box"
+            android:button="@null"
+            android:checked="false" />
+        <TextView 
+            android:id="@+id/tv_boy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/ck_boyCheck"
+            android:text="男"
+            />
+        <CheckBox
+            android:id="@+id/ck_girlCheck"
+            android:layout_toRightOf="@+id/tv_boy"
+            android:layout_width="24dip"
+            android:layout_height="24dip"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="50dip"
+            android:background="@drawable/selector_ordercheck_box"
+            android:button="@null"
+            android:checked="false" />
+        <TextView 
+            android:id="@+id/tv_girl"
+            android:layout_toRightOf="@+id/ck_girlCheck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="女"
+            />
+    </RelativeLayout>
+    <Button 
+        android:id="@+id/bt_actHome"
+        android:layout_width="150dip"
+        android:layout_height="wrap_content"
+        android:text="立即进入"
+        android:layout_gravity="center_horizontal"
+        />
+    
+
+</LinearLayout>
