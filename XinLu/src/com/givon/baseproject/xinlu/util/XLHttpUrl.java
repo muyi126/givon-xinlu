@@ -12,11 +12,12 @@ package com.givon.baseproject.xinlu.util;
 
 public class XLHttpUrl {
 	
-	public static String Main_Url = "http://game.takee.me";
+	public static String Main_Url = "http://192.168.1.108:8080/FootprintService";
 	public static String getUrl(String url){
 		return Main_Url+url;
 	}
-	public static String Login = "/game/ceshi.html";
+	public static String Login = "/LoginRegister/Login";
+	public static String Register = "/LoginRegister/Register";
 	
 
 }

@@ -772,7 +772,7 @@ public class PLA_ListView extends PLA_AbsListView {
             // TODO: after first layout we should maybe start at the first visible position, not 0
             heightSize = measureHeightOfChildren(widthMeasureSpec, 0, NO_POSITION, heightSize, -1);
         }
-
+        System.out.println("heightSize:"+heightSize);
         setMeasuredDimension(widthSize, heightSize);
         mWidthMeasureSpec = widthMeasureSpec;
     }

@@ -26,5 +26,6 @@ public class Constant {
 	public static final String LATITUDE = "_Latitude";
 	public static final String LONGITUDE = "_Longitude";
 	public static final String ADDRESS = "_address";
+	public static final String PHONE = "_phone";
 
 }
