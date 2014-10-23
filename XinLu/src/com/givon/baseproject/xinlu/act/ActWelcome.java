@@ -19,7 +19,7 @@ public class ActWelcome extends BaseActivity{
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
-		showActivity(MainActivity.class, true);
+		showActivity(ActLogin.class, true);
 	}
 
 }

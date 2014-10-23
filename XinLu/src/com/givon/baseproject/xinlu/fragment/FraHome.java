@@ -12,7 +12,6 @@ package com.givon.baseproject.xinlu.fragment;
 
 import java.util.ArrayList;
 
-import android.annotation.SuppressLint;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,51 +19,58 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.givon.baseproject.xinlu.BaseApplication;
+import com.givon.baseproject.xinlu.BaseFragment;
 import com.givon.baseproject.xinlu.BaseListFragment;
 import com.givon.baseproject.xinlu.R;
 import com.givon.baseproject.xinlu.adapter.MyFragmentPagerAdapter;
-import com.givon.baseproject.xinlu.view.MyListView;
+import com.givon.baseproject.xinlu.interfaceview.ViewPageTopListener;
 import com.givon.baseproject.xinlu.view.MyScrollView;
-import com.givon.baseproject.xinlu.view.MyScrollView.TouchListenerS;
+import com.givon.baseproject.xinlu.view.MyScrollView.ScrollViewListener;
 import com.givon.baseproject.xinlu.view.MyViewPager;
+import com.givon.baseproject.xinlu.view.RefreshableView;
+import com.givon.baseproject.xinlu.view.TopDotPager;
 
 /**
  * 首页
  * @author givon
  * 
  */
-public class FraHome extends BaseListFragment<String> implements
-		com.givon.baseproject.xinlu.BaseListFragment.AddHeaderViewCallBack {
+public class FraHome extends BaseFragment implements ViewPageTopListener,OnClickListener{
 	Resources resources;
 	private MyViewPager mPager;
 	private ArrayList<Fragment> fragmentsList;
 	private ImageView ivBottomLine;
 	private TextView tvTabNew, tvTabHot, tvTree;
+	private TextView tvTabNew_jiadi, tvTabHot_jiadi, tvTree_jiadi;
 	// private MyListView mListView;
 	private MyScrollView mMyScrollView;
 	private boolean isHit = false;// 是否隐藏
-	private int oldViewPageHeight;
-	private int oldScrollViewHeight;
-
 	private int currIndex = 0;
 	private int bottomLineWidth;
 	private int offset = 0;
 	private int position_one;
 	public final static int num = 3;
-	private View mHeaderView;
+	private RefreshableView mRefreshableView;
+	private LinearLayout mTopBarLayout;
+	private LinearLayout mTopBarLayout_Jiadi;
+	private TopDotPager mDotPager;
 	Fragment home1;
 	Fragment home2;
 	Fragment home3;
+	private TextView mTv_SearchView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -74,24 +80,24 @@ public class FraHome extends BaseListFragment<String> implements
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		setHeaderView(this);
-//		 View view = super.onCreateView(inflater, container, savedInstanceState);
-//		 mTitleBar.setVisibility(View.GONE);
-//		 mListView.addHeaderView(mHeaderView);
-		// View view = getActivity().getLayoutInflater().inflate(R.layout.layout_frahome, null);
-		mHeaderView = getActivity().getLayoutInflater().inflate(R.layout.layout_frahome, null);
-		// mListView = (MyListView) view.findViewById(R.id.id_pull_listview);
+		View view = getActivity().getLayoutInflater().inflate(R.layout.layout_frahome, null);
+		mRefreshableView = (RefreshableView) view.findViewById(R.id.refreshable_view);
+		mTopBarLayout = (LinearLayout) view.findViewById(R.id.ly_top_bar);
+		mTv_SearchView = (TextView) view.findViewById(R.id.tv_search);
+		mTv_SearchView.setOnClickListener(this);
+		mTopBarLayout_Jiadi = (LinearLayout) view.findViewById(R.id.ly_top_bar_jiadi);
+		mDotPager = (TopDotPager) view.findViewById(R.id.topDotPager);
+		mMyScrollView = (MyScrollView) view.findViewById(R.id.sv_ScrollView);
+		InitWidth(view);
+		InitTextView(view);
+		InitViewPager(view);
 		resources = getResources();
-		InitWidth(mHeaderView);
-		InitTextView(mHeaderView);
-		InitViewPager(mHeaderView);
 		TranslateAnimation animation = new TranslateAnimation(position_one, offset, 0, 0);
 		tvTabHot.setTextColor(resources.getColor(R.color.font_white));
 		animation.setFillAfter(true);
 		animation.setDuration(300);
 		ivBottomLine.startAnimation(animation);
-		// mListView.addHeaderView(mHeaderView);
-		return mHeaderView;
+		return view;
 	}
 
 	private void InitTextView(View parentView) {
@@ -101,66 +107,51 @@ public class FraHome extends BaseListFragment<String> implements
 		tvTabNew.setOnClickListener(new MyOnClickListener(0));
 		tvTabHot.setOnClickListener(new MyOnClickListener(1));
 		tvTree.setOnClickListener(new MyOnClickListener(2));
+		tvTabNew_jiadi = (TextView) parentView.findViewById(R.id.tv_tab_1_jd);
+		tvTabHot_jiadi = (TextView) parentView.findViewById(R.id.tv_tab_2_jd);
+		tvTree_jiadi = (TextView) parentView.findViewById(R.id.tv_tab_3_jd);
+		tvTabNew_jiadi.setOnClickListener(new MyOnClickListener(0));
+		tvTabHot_jiadi.setOnClickListener(new MyOnClickListener(1));
+		tvTree_jiadi.setOnClickListener(new MyOnClickListener(2));
 	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onActivityCreated(savedInstanceState);
-		// ArrayList<String> list = new ArrayList<String>();
-		// list.add("1");
-		// mAdapter = new ListAdapter(getActivity());
-		// mListView.setAdapter(mAdapter);
+		mMyScrollView.setScrollViewListener(new ScrollViewListener() {
+
+			@Override
+			public void onScrollChanged(MyScrollView scrollView, int x, int y, int oldx, int oldy) {
+				int[] location = new int[4];
+				mTopBarLayout.getLocationInWindow(location);
+				System.out.println("HH:" + location[0] + " " + location[1] + " " + location[2]
+						+ " " + location[3]);
+				if (location[1] - 40 < 0 && !isHit) {
+					// 高度小于0 Scroll不监听上拉下拉事件
+					mMyScrollView.setHitTopView(true);
+					mMyScrollView.setPressed(false);
+					mMyScrollView.setClickable(false);
+					isHit = true;
+				}
+				if (location[1] - 40 < 0 && mTopBarLayout_Jiadi.getVisibility() == View.GONE) {
+					mTopBarLayout_Jiadi.setVisibility(View.VISIBLE);
+				} else if (location[1] - 40 > 0
+						&& mTopBarLayout_Jiadi.getVisibility() == View.VISIBLE) {
+					mTopBarLayout_Jiadi.setVisibility(View.GONE);
+				}
+			}
+		});
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+
 	}
 
 	private void InitViewPager(View parentView) {
 		mPager = (MyViewPager) parentView.findViewById(R.id.vPager);
-		mMyScrollView = (MyScrollView) parentView.findViewById(R.id.sv_ScrollView);
-		android.view.ViewGroup.LayoutParams params = mPager.getLayoutParams();
-		// params.height = BaseApplication.mHeight+300;
-		mPager.setLayoutParams(params);
-//		System.out.println("mListView:H " + mListView.getHeight());
-		mMyScrollView.setTouchListenerS(new TouchListenerS() {
 
-			@SuppressLint("NewApi")
-			@Override
-			public void scrollUp() {
-				System.out.println("UP");
-				if (!isHit) {
-					mMyScrollView.setTranslationY(-300f);
-					System.out.println("mMyScrollView:" + mMyScrollView.getHeight() + " mPager:"
-							+ mPager.getHeight() + " HH:" + BaseApplication.mHeight);
-					android.view.ViewGroup.LayoutParams params = mPager.getLayoutParams();
-					params.height = BaseApplication.mHeight - 300;
-					mPager.setLayoutParams(params);
-					android.view.ViewGroup.LayoutParams params2 = mMyScrollView.getLayoutParams();
-					params2.height = BaseApplication.mHeight + 300;
-					mMyScrollView.setLayoutParams(params2);
-					isHit = true;
-				}
-			}
-
-			@SuppressLint("NewApi")
-			@Override
-			public void scrollDown() {
-				System.out.println("Down");
-				if (isHit) {
-					mMyScrollView.setTranslationY(0);
-					android.view.ViewGroup.LayoutParams params = mPager.getLayoutParams();
-					System.out.println("mMyScrollView:" + mMyScrollView.getHeight() + " mPager:"
-							+ mPager.getHeight());
-					params.height = oldViewPageHeight;
-					mPager.setLayoutParams(params);
-					android.view.ViewGroup.LayoutParams params2 = mMyScrollView.getLayoutParams();
-					params2.height = oldScrollViewHeight;
-					mMyScrollView.setLayoutParams(params2);
-					isHit = false;
-				}
-			}
-		});
-
-		oldViewPageHeight = mPager.getLayoutParams().height;
-		oldScrollViewHeight = mMyScrollView.getLayoutParams().height;
 		final int w = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
 		final int h = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
 		ViewTreeObserver vto = mPager.getViewTreeObserver();
@@ -172,15 +163,16 @@ public class FraHome extends BaseListFragment<String> implements
 				view.measure(w, h);
 				LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT,
 						LayoutParams.WRAP_CONTENT);
-				params.height = view.getMeasuredHeight();
+				// params.height = view.getMeasuredHeight();
+				params.height = BaseApplication.mHeight;
 				mPager.setLayoutParams(params);
 			}
 		});
 		fragmentsList = new ArrayList<Fragment>();
 
-		home1 = new FraTuiJian();
-		home2 = new FraFriend();
-		home3 = new FraActive();
+		home1 = new FraTuiJian(this);
+		home2 = new FraFriend(this);
+		home3 = new FraActive(this);
 
 		fragmentsList.add(home1);
 		fragmentsList.add(home2);
@@ -213,6 +205,7 @@ public class FraHome extends BaseListFragment<String> implements
 
 		@Override
 		public void onClick(View v) {
+			System.out.println("index:" + index);
 			mPager.setCurrentItem(index);
 		}
 	};
@@ -221,8 +214,8 @@ public class FraHome extends BaseListFragment<String> implements
 
 		@Override
 		public void onPageSelected(int arg0) {
+			View view = mPager.getChildAt(arg0);
 			Animation animation = null;
-			System.out.println("arg0:" + arg0 + "   P:" + position_one + " offset:" + offset);
 			switch (arg0) {
 			case 0:
 				if (currIndex == 1) {
@@ -232,6 +225,7 @@ public class FraHome extends BaseListFragment<String> implements
 					animation = new TranslateAnimation(2 * position_one, offset, 0, 0);
 				}
 				tvTabNew.setTextColor(resources.getColor(R.color.font_white));
+				tvTabNew_jiadi.setTextColor(resources.getColor(R.color.font_white));
 				break;
 			case 1:
 				if (currIndex == 0) {
@@ -241,17 +235,17 @@ public class FraHome extends BaseListFragment<String> implements
 					animation = new TranslateAnimation(2 * position_one, position_one, 0, 0);
 				}
 				tvTabHot.setTextColor(resources.getColor(R.color.font_white));
+				tvTabHot_jiadi.setTextColor(resources.getColor(R.color.font_white));
 				break;
 			case 2:
 				if (currIndex == 1) {
 					animation = new TranslateAnimation(position_one, 2 * position_one, 0, 0);
-					// tvTabNew.setTextColor(resources.getColor(R.color.lightwhite));
 				}
 				if (currIndex == 0) {
 					animation = new TranslateAnimation(offset, 2 * position_one, 0, 0);
-					// tvTabNew.setTextColor(resources.getColor(R.color.lightwhite));
 				}
 				tvTree.setTextColor(resources.getColor(R.color.font_white));
+				tvTree_jiadi.setTextColor(resources.getColor(R.color.font_white));
 				break;
 			}
 			// View view = mPager.getChildAt(currIndex);
@@ -275,25 +269,19 @@ public class FraHome extends BaseListFragment<String> implements
 	}
 
 	@Override
-	protected View getItemView(int position, View convertView, ViewGroup parent) {
-		if (convertView == null) {
-			convertView = getActivity().getLayoutInflater().inflate(R.layout.layout_testitem, null);
+	public void onFirst() {
+		if (isHit) {
+			mMyScrollView.setHitTopView(false);
+			mMyScrollView.setPressed(true);
+			mMyScrollView.setClickable(true);
+			isHit = false;
 		}
-		((TextView) convertView.findViewById(R.id.tex)).setText("11111");
-		return convertView;
 	}
 
 	@Override
-	public void addHeaderView() {
-		mHeaderView = getActivity().getLayoutInflater().inflate(R.layout.layout_frahome, null);
-		resources = getResources();
-		InitWidth(mHeaderView);
-		InitTextView(mHeaderView);
-		InitViewPager(mHeaderView);
-		TranslateAnimation animation = new TranslateAnimation(position_one, offset, 0, 0);
-		tvTabHot.setTextColor(resources.getColor(R.color.font_white));
-		animation.setFillAfter(true);
-		animation.setDuration(300);
-		ivBottomLine.startAnimation(animation);
+	public void onClick(View v) {
+		// TODO Auto-generated method stub
+		
 	}
+
 }

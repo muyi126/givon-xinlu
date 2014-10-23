@@ -31,7 +31,6 @@ public class MainActivity extends BaseFragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
 
         fragmentManager = this.getSupportFragmentManager();;
@@ -39,10 +38,6 @@ public class MainActivity extends BaseFragmentActivity {
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-//                FragmentTransaction transaction = fragmentManager.beginTransaction();
-//                Fragment fragment = FragmentFactory.getInstanceByIndex(checkedId);
-//                transaction.replace(R.id.content, fragment);
-//                transaction.commit();
             	switch (checkedId) {
                 case R.id.rb_1:
                     switchContentClass(FraHome.class);

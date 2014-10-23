@@ -27,5 +27,8 @@ public class Constant {
 	public static final String LONGITUDE = "_Longitude";
 	public static final String ADDRESS = "_address";
 	public static final String PHONE = "_phone";
+	public static final String COOKIE_FILE = "cookie_file";
+	public static final String APP_TOKEN = "app_token";
+	public static final String IS_LOGIN_AUTH = "is_login";
 
 }

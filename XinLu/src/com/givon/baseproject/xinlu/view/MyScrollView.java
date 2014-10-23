@@ -10,8 +10,6 @@
 
 package com.givon.baseproject.xinlu.view;
 
-import com.givon.baseproject.xinlu.R.id;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
@@ -19,19 +17,33 @@ import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.widget.ScrollView;
 
-public class MyScrollView extends ScrollView implements OnGestureListener {
-	private GestureDetector detector;
+public class MyScrollView extends ScrollView {
+//	private GestureDetector detector;
 	private TouchListenerS touchListenerS;
+	private boolean isHitTopView;
+	private ScrollViewListener scrollViewListener = null;
+
+	public ScrollViewListener getScrollViewListener() {
+		return scrollViewListener;
+	}
+
+	public void setScrollViewListener(ScrollViewListener scrollViewListener) {
+		this.scrollViewListener = scrollViewListener;
+	}
+
+	public boolean isHitTopView() {
+		return isHitTopView;
+	}
+
+	public void setHitTopView(boolean isHitTopView) {
+		System.out.println("setHitTopView:"+isHitTopView);
+		this.isHitTopView = isHitTopView;
+	}
 
 	public MyScrollView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		detector = new GestureDetector(this);
 	}
 
-	// public MyScrollView(Context context, AttributeSet attrs) {
-	// super(context, attrs);
-	// // TODO Auto-generated constructor stub
-	// }
 
 	public TouchListenerS getTouchListenerS() {
 		return touchListenerS;
@@ -43,17 +55,16 @@ public class MyScrollView extends ScrollView implements OnGestureListener {
 
 	public MyScrollView(Context context) {
 		super(context);
-		detector = new GestureDetector(this);
 	}
 
 //	@Override
 //	public boolean dispatchTouchEvent(MotionEvent ev) {
-//		this.detector.onTouchEvent(ev);
-//		boolean ret = super.dispatchTouchEvent(ev);
-//		if (ret) {
-//			requestDisallowInterceptTouchEvent(true);
-//		}
-//		return ret;
+//		// this.detector.onTouchEvent(ev);
+//		// boolean ret = super.dispatchTouchEvent(ev);
+//		// if (ret) {
+//		// requestDisallowInterceptTouchEvent(true);
+//		// }
+//		return super.dispatchTouchEvent(ev);
 //	}
 
 	// 滑动距离及坐标
@@ -61,7 +72,7 @@ public class MyScrollView extends ScrollView implements OnGestureListener {
 
 	public MyScrollView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		detector = new GestureDetector(this);
+//		detector = new GestureDetector(this);
 	}
 
 	@Override
@@ -78,62 +89,86 @@ public class MyScrollView extends ScrollView implements OnGestureListener {
 
 			xDistance += Math.abs(curX - xLast);
 			yDistance += Math.abs(curY - yLast);
-			System.out.println("yDistance:" + (curX - xLast));
 			xLast = curX;
 			yLast = curY;
-
 			if (xDistance > yDistance) {
 				return false;
 			}
 		}
-
-		return super.onInterceptTouchEvent(ev);
-	}
-
-	@Override
-	public boolean onDown(MotionEvent e) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void onShowPress(MotionEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public boolean onSingleTapUp(MotionEvent e) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void onLongPress(MotionEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-		if (e1.getY() - e2.getY()>80) {
-			if (touchListenerS != null) {
-				touchListenerS.scrollUp();
-			}
-		} else if (e1.getY() - e2.getY()<-80) {
-			if (touchListenerS != null) {
-				touchListenerS.scrollDown();
-			}
-		} else
+		System.out.println("isHitTopView:"+isHitTopView);
+		if (isHitTopView) {
 			return false;
-		return true;
+		}else {
+			return super.onInterceptTouchEvent(ev);
+		}
+		
 	}
+
+	@Override
+	protected void onScrollChanged(int x, int y, int oldx, int oldy) {
+		super.onScrollChanged(x, y, oldx, oldy);
+		if (scrollViewListener != null) {
+			scrollViewListener.onScrollChanged(this, x, y, oldx, oldy);
+		}
+	}
+//
+//	@Override
+//	public boolean onDown(MotionEvent e) {
+//		// TODO Auto-generated method stub
+//		return false;
+//	}
+//
+//	@Override
+//	public void onShowPress(MotionEvent e) {
+//		// TODO Auto-generated method stub
+//
+//	}
+//
+//	@Override
+//	public boolean onSingleTapUp(MotionEvent e) {
+//		// TODO Auto-generated method stub
+//		return false;
+//	}
+//
+//	@Override
+//	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+//		// TODO Auto-generated method stub
+//		return false;
+//	}
+//
+//	@Override
+//	public void onLongPress(MotionEvent e) {
+//		// TODO Auto-generated method stub
+//
+//	}
+//
+//	@Override
+//	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+//		if (e1.getY() - e2.getY() > 80) {
+//			if (touchListenerS != null) {
+//				touchListenerS.scrollUp();
+//			}
+//		} else if (e1.getY() - e2.getY() < -80) {
+//			if (touchListenerS != null) {
+//				touchListenerS.scrollDown();
+//			}
+//		} else
+//			return false;
+//		return true;
+//	}
+
+	private boolean isCanScall(MotionEvent event) {
+
+		return false;
+	}
+	
+//	@Override
+//	public boolean onTouchEvent(MotionEvent ev) {
+//		if(ev.getAction() == MotionEvent.ACTION_DOWN){
+//				return false;
+//		}
+//		return super.onTouchEvent(ev);
+//	}
 
 	public interface TouchListenerS {
 		void scrollUp();
@@ -141,4 +176,11 @@ public class MyScrollView extends ScrollView implements OnGestureListener {
 		void scrollDown();
 	}
 
+	public interface ScrollViewListener {
+
+		void onScrollChanged(MyScrollView scrollView, int x, int y, int oldx, int oldy);
+
+	}
+	
+	
 }

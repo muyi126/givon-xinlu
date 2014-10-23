@@ -14,30 +14,30 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Locale;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
-import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.EditText;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.android.support.httpclient.HttpCallBack;
 import com.android.support.httpclient.HttpClientAsync;
 import com.android.support.httpclient.HttpParams;
 import com.givon.baseproject.xinlu.BaseActivity;
 import com.givon.baseproject.xinlu.R;
+import com.givon.baseproject.xinlu.cookie.ShareCookie;
 import com.givon.baseproject.xinlu.entity.Constant;
+import com.givon.baseproject.xinlu.entity.MemberEntity;
 import com.givon.baseproject.xinlu.util.StringUtil;
 import com.givon.baseproject.xinlu.util.ToastUtils;
 import com.givon.baseproject.xinlu.util.XLHttpUrl;
@@ -52,12 +52,12 @@ import com.upyun.api.utils.UpYunUtils;
 public class ActRightRegist extends BaseActivity {
 	private static final String TEST_API_KEY = "lVBfg35QWT+r/LMFsoJjiQ5deno="; // 测试使用的表单api验证密钥
 	private static final String BUCKET = "tiangou-app-img"; // 存储空间
-	private static final long EXPIRATION = System.currentTimeMillis()/1000 + 600; // 过期时间，必须大于当前时间
+	private static final long EXPIRATION = System.currentTimeMillis() / 1000 + 600; // 过期时间，必须大于当前时间
 	private String avtaString;
 	private String mPhone;
 
-//	private static final String SOURCE_FILE = Environment.getExternalStorageDirectory()
-//			.getAbsolutePath() + File.separator + "IMAG1104.jpg"; // 来源文件
+	// private static final String SOURCE_FILE = Environment.getExternalStorageDirectory()
+	// .getAbsolutePath() + File.separator + "IMAG1104.jpg"; // 来源文件
 
 	@ViewInject(R.id.bt_actHome)
 	private Button mLoginButton;
@@ -73,14 +73,12 @@ public class ActRightRegist extends BaseActivity {
 
 	@ViewInject(R.id.rv_header)
 	private RoundImageView mRoundImageView;
-	
+
 	@ViewInject(R.id.et_setPassWord)
 	private EditText mEdPassWord;
-	
-	
-	@ViewInject(R.id.mima_Check)
+
+	@ViewInject(R.id.et_nikename)
 	private EditText mEdNickName;
-	
 
 	@Override
 	protected void onCreate(Bundle arg0) {
@@ -88,7 +86,7 @@ public class ActRightRegist extends BaseActivity {
 		setContentView(R.layout.layout_actright_regist);
 		ViewUtils.inject(this);
 		Intent intent = getIntent();
-		if(null!=intent&&intent.hasExtra(Constant.PHONE)){
+		if (null != intent && intent.hasExtra(Constant.PHONE)) {
 			mPhone = intent.getStringExtra(Constant.PHONE);
 		}
 		initView();
@@ -125,26 +123,25 @@ public class ActRightRegist extends BaseActivity {
 
 	@OnClick(R.id.bt_actHome)
 	public void doLoginHome(View v) {
-		// setResult(Activity.RESULT_OK,null);
-		// finish();
+
 		String password = mEdPassWord.getText().toString().trim();
 		String nickName = mEdNickName.getText().toString().trim();
-		if(StringUtil.isEmpty(avtaString)){
-			ToastUtils.showMessage("头像不能为空");
-			return;
-		}
-		if(StringUtil.isEmpty(mPhone)){
-			ToastUtils.showMessage("注册号码为空，需要重新验证");
-			return;
-		}
-		if(StringUtil.isEmpty(password)){
-			ToastUtils.showMessage("密码不能为空");
-			return;
-		}
-		if(StringUtil.isEmpty(nickName)){
-			ToastUtils.showMessage("昵称不能为空");
-			return;
-		}
+		// if(StringUtil.isEmpty(avtaString)){
+		// ToastUtils.showMessage("头像不能为空");
+		// return;
+		// }
+		// if(StringUtil.isEmpty(mPhone)){
+		// ToastUtils.showMessage("注册号码为空，需要重新验证");
+		// return;
+		// }
+		// if(StringUtil.isEmpty(password)){
+		// ToastUtils.showMessage("密码不能为空");
+		// return;
+		// }
+		// if(StringUtil.isEmpty(nickName)){
+		// ToastUtils.showMessage("昵称不能为空");
+		// return;
+		// }
 		registAction(mPhone, password, nickName, "男", avtaString);
 	}
 
@@ -157,29 +154,47 @@ public class ActRightRegist extends BaseActivity {
 			String headImage) {
 		HttpClientAsync httpClientAsync = HttpClientAsync.getInstance();
 		HttpParams params = new HttpParams();
-		params.put("memberName", memberName);
-		params.put("password", memberName);
-		params.put("nickName", memberName);
-		params.put("sex", memberName);
-		params.put("headImage", memberName);
-		httpClientAsync.post(XLHttpUrl.getUrl(XLHttpUrl.Register), params, "", new HttpCallBack() {
+		params.put("memberName", "18780118236");
+		params.put("password", "123456");
+		params.put("nickName", "Hello");
+		params.put("sex", "男");
+		params.put("headImage", "/test/upload/1413943835514.jpg");
 
-			@Override
-			public void onHttpSuccess(Object obj) {
-				String aobj = (String) obj;
-				System.out.println(aobj);
-			}
+		JSONObject object = new JSONObject();
+		object.put("memberName", "18780118236");
+		object.put("password", "123456");
+		object.put("nickName", "Hello");
+		object.put("sex", "男");
+		object.put("headImage", "/test/upload/1413943835514.jpg");
+		String dataString = JSON.toJSONString(object);
+		System.out.println(dataString);
+		httpClientAsync.post(XLHttpUrl.getUrl(XLHttpUrl.Register), dataString,
+				XLHttpUrl.CONTENT_TYPE, new HttpCallBack() {
 
-			@Override
-			public void onHttpStarted() {
+					@Override
+					public void onHttpSuccess(Object obj) {
+						MemberEntity entity = (MemberEntity) obj;
+						if (null != entity) {
+							ShareCookie.saveUserInfo(entity);
+							ShareCookie.setToken(entity.getToken());
+							ShareCookie.setLoginAuth(true);
+							setResult(Activity.RESULT_OK, null);
+							finish();
+						}
+					}
 
-			}
+					@Override
+					public void onHttpStarted() {
 
-			@Override
-			public void onHttpFailure(Exception e, String message) {
+					}
 
-			}
-		});
+					@Override
+					public void onHttpFailure(Exception e, String message) {
+						if (!StringUtil.isEmpty(message)) {
+							ToastUtils.showMessage(message);
+						}
+					}
+				}, MemberEntity.class);
 
 	}
 
@@ -201,9 +216,9 @@ public class ActRightRegist extends BaseActivity {
 		if (data != null && resultCode == Activity.RESULT_OK) {
 			Bitmap cameraBitmap = (Bitmap) data.getExtras().get("data");
 			String name = "/header.jpg";
-//			String name = "/"
-//					+ DateFormat.format("yyyyMMdd_hhmmss", Calendar.getInstance(Locale.CHINA))
-//					+ ".jpg";
+			// String name = "/"
+			// + DateFormat.format("yyyyMMdd_hhmmss", Calendar.getInstance(Locale.CHINA))
+			// + ".jpg";
 			FileOutputStream fout = null;
 			File file = new File("/sdcard/ZuJi/");
 			file.mkdirs();
@@ -243,8 +258,8 @@ public class ActRightRegist extends BaseActivity {
 				// 设置服务器上保存文件的目录和文件名，如果服务器上同目录下已经有同名文件会被自动覆盖的。
 				String SAVE_KEY = File.separator + "test" + File.separator + "upload"
 						+ File.separator + System.currentTimeMillis() + ".jpg";
-				System.out.println("SAVE_KEY:"+SAVE_KEY);
-				System.out.println("SAVE_KEY:"+filePath);
+				System.out.println("SAVE_KEY:" + SAVE_KEY);
+				System.out.println("SAVE_KEY:" + filePath);
 				// 取得base64编码后的policy
 				String policy = UpYunUtils.makePolicy(SAVE_KEY, EXPIRATION, BUCKET);
 
@@ -274,7 +289,6 @@ public class ActRightRegist extends BaseActivity {
 				Toast.makeText(getApplicationContext(), "成功", Toast.LENGTH_LONG).show();
 			} else {
 				Toast.makeText(getApplicationContext(), "失败", Toast.LENGTH_LONG).show();
-
 			}
 		}
 
