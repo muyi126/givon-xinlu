@@ -37,5 +37,11 @@
     <string name="regist_input_username">用户名不能为空</string>
     <string name="login_input_email_error">邮箱错误</string>
     <string name="regist_input_phone_error">手机号码错误</string>
+	
+	<string name="hello">下拉可刷新 </string>
+    <string name="refresh_down_text">下拉可刷新</string>
+	<string name="refresh_release_text">松开可刷新</string>
+	<string name="toast_text">ScrollView下拉刷新完毕</string>
+    <string name="ptr_refreshing">Refreshing</string> 
 
 </resources>

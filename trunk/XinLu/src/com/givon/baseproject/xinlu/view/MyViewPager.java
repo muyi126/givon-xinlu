@@ -13,6 +13,7 @@ package com.givon.baseproject.xinlu.view;
 import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 public class MyViewPager extends ViewPager {
@@ -36,15 +37,26 @@ public class MyViewPager extends ViewPager {
 //
 //	}
 
+	
+	@Override
+	protected void onLayout(boolean arg0, int arg1, int arg2, int arg3, int arg4) {
+		super.onLayout(arg0, arg1, arg2, arg3, arg4);
+	}
 //	@Override
 //	public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 //		// TODO Auto-generated method stub
 //		int viewHeight = 0;
 //		View childView = getChildAt(getCurrentItem());
+//		if(null==childView){
+//			super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+//			return;
+//		}
 //		childView
 //				.measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
 //		viewHeight = childView.getMeasuredHeight();
 //		heightMeasureSpec = MeasureSpec.makeMeasureSpec(viewHeight, MeasureSpec.EXACTLY);
 //		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 //	}
+	
+	
 }

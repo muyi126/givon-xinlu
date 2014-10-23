@@ -13,6 +13,7 @@ package com.givon.baseproject.xinlu.act;
 import java.util.HashMap;
 import java.util.Random;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,13 +28,20 @@ import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
 import cn.smssdk.gui.RegisterPage;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.android.support.httpclient.HttpCallBack;
 import com.android.support.httpclient.HttpClientAsync;
 import com.android.support.httpclient.HttpParams;
 import com.givon.baseproject.xinlu.BaseActivity;
 import com.givon.baseproject.xinlu.BaseApplication;
 import com.givon.baseproject.xinlu.R;
+import com.givon.baseproject.xinlu.cookie.ShareCookie;
 import com.givon.baseproject.xinlu.entity.Constant;
+import com.givon.baseproject.xinlu.entity.MemberEntity;
 import com.givon.baseproject.xinlu.util.StatisticManager;
+import com.givon.baseproject.xinlu.util.StringUtil;
+import com.givon.baseproject.xinlu.util.ToastUtils;
 import com.givon.baseproject.xinlu.util.XLHttpUrl;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.ViewUtils;
@@ -87,23 +95,54 @@ public class ActLogin extends BaseActivity implements Callback {
 	}
 
 	public void doLogin(View v) {
-		HttpUtils httpUtils = new HttpUtils();
-		httpUtils.send(HttpMethod.GET, XLHttpUrl.getUrl(XLHttpUrl.Login),
-				new RequestCallBack<String>() {
-
-					@Override
-					public void onSuccess(ResponseInfo<String> responseInfo) {
-						// MemberEntity entity = responseInfo.result;
-						// entity.getData();
-						System.out.println(responseInfo);
-					}
-
-					@Override
-					public void onFailure(HttpException error, String msg) {
-						// TODO Auto-generated method stub
-
-					}
-				});
+		JSONObject object = new JSONObject();
+		object.put("memberName", "18780118236");
+		object.put("password", "123456");
+		String dataString = JSON.toJSONString(object);
+		HttpClientAsync httpClientAsync = HttpClientAsync.getInstance();
+		httpClientAsync.post(XLHttpUrl.getUrl(XLHttpUrl.Login), dataString, XLHttpUrl.CONTENT_TYPE, new HttpCallBack() {
+			
+			@Override
+			public void onHttpSuccess(Object obj) {
+				MemberEntity entity = (MemberEntity) obj;
+				if(null!=entity){
+					ShareCookie.saveUserInfo(entity);
+					ShareCookie.setToken(entity.getToken());
+					ShareCookie.setLoginAuth(true);
+					setResult(Activity.RESULT_OK, null);
+					showActivity(MainActivity.class, true);
+				}
+			}
+			
+			@Override
+			public void onHttpStarted() {
+				
+			}
+			
+			@Override
+			public void onHttpFailure(Exception e, String message) {
+				if(!StringUtil.isEmpty(message)){
+					ToastUtils.showMessage(message);
+				}
+			}
+		}, MemberEntity.class);
+//		HttpUtils httpUtils = new HttpUtils();
+//		httpUtils.send(HttpMethod.GET, XLHttpUrl.getUrl(XLHttpUrl.Login),
+//				new RequestCallBack<String>() {
+//
+//					@Override
+//					public void onSuccess(ResponseInfo<String> responseInfo) {
+//						// MemberEntity entity = responseInfo.result;
+//						// entity.getData();
+//						System.out.println(responseInfo);
+//					}
+//
+//					@Override
+//					public void onFailure(HttpException error, String msg) {
+//						// TODO Auto-generated method stub
+//
+//					}
+//				});
 
 	}
 

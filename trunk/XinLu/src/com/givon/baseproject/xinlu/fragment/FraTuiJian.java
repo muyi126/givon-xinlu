@@ -15,23 +15,29 @@ import java.util.Random;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Toast;
 
 import com.givon.baseproject.xinlu.BaseFragment;
 import com.givon.baseproject.xinlu.R;
+import com.givon.baseproject.xinlu.interfaceview.ViewPageTopListener;
 import com.givon.baseproject.xinlu.view.MultiColumnListView;
-import com.givon.baseproject.xinlu.view.PLA_AdapterView;
-import com.givon.baseproject.xinlu.view.PLA_AdapterView.OnItemClickListener;
+import com.givon.baseproject.xinlu.view.MultiColumnListView.OnLoadMoreListener;
 
 public class FraTuiJian extends BaseFragment {
-	private MultiColumnListView mAdapterView = null;
+	private MultiColumnListView mMultiColumnListView = null;
 	private MySimpleAdapter mAdapter = null;
-
+	private ViewPageTopListener mPageTopListener;
+	
+	public FraTuiJian(ViewPageTopListener l) {
+		mPageTopListener = l;
+	}
 	public void onCreate(android.os.Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
@@ -40,7 +46,7 @@ public class FraTuiJian extends BaseFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.sample_pull_to_refresh_act, null);
-		mAdapterView = (MultiColumnListView) view.findViewById(R.id.list);
+		mMultiColumnListView = (MultiColumnListView) view.findViewById(R.id.list);
 		return view;
 	}
 
@@ -95,8 +101,10 @@ public class FraTuiJian extends BaseFragment {
 	} 
 	
 	private void initAdapter() {
+		
+		
+//		mAdapter = new SimpleAdapter<ImageWrapper>(getLayoutInflater(), this);
 		mAdapter = new MySimpleAdapter(getActivity(), R.layout.sample_item);
-
 		for (int i = 0; i < 50; ++i) {
 			// generate 30 random items.
 
@@ -110,14 +118,67 @@ public class FraTuiJian extends BaseFragment {
 			builder.append(chars);
 			mAdapter.add(builder.toString());
 		}
-		mAdapterView.setAdapter(mAdapter);
-		mAdapterView.setOnItemClickListener(new OnItemClickListener() {
+		mMultiColumnListView.setAdapter(mAdapter);
+//        dataSet.addAll(ImgResource.genData());
+//        mAdapter.update(dataSet);
+        mMultiColumnListView.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore() {
+//                dataSet.addAll(ImgResource.genData());
+            	for (int i = 0; i < 5; ++i) {
+        			// generate 30 random items.
+
+        			StringBuilder builder = new StringBuilder();
+        			builder.append("Hello!![");
+        			builder.append(i);
+        			builder.append("] ");
+
+        			char[] chars = new char[mRand.nextInt(500)];
+        			Arrays.fill(chars, '1');
+        			builder.append(chars);
+        			mAdapter.add(builder.toString());
+        		}
+                mAdapter.notifyDataSetChanged();
+                Toast.makeText(getActivity(), "到List底部自动加载更多数据", Toast.LENGTH_SHORT).show();
+                //5秒后完成
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                    	mMultiColumnListView.onLoadMoreComplete();
+                    }
+                }, 5000);
+            }
 
 			@Override
-			public void onItemClick(PLA_AdapterView<?> parent, View view, int position, long id) {
-				
+			public void onFirst() {
+				if(null!=mPageTopListener){
+					mPageTopListener.onFirst();
+				}
 			}
-		});
+        });
+//		mAdapter = new MySimpleAdapter(getActivity(), R.layout.sample_item);
+//
+//		for (int i = 0; i < 50; ++i) {
+//			// generate 30 random items.
+//
+//			StringBuilder builder = new StringBuilder();
+//			builder.append("Hello!![");
+//			builder.append(i);
+//			builder.append("] ");
+//
+//			char[] chars = new char[mRand.nextInt(500)];
+//			Arrays.fill(chars, '1');
+//			builder.append(chars);
+//			mAdapter.add(builder.toString());
+//		}
+//		mMultiColumnListView.setAdapter(mAdapter);
+//		mMultiColumnListView.setOnItemClickListener(new OnItemClickListener() {
+//
+//			@Override
+//			public void onItemClick(PLA_AdapterView<?> parent, View view, int position, long id) {
+//				
+//			}
+//		});
 
 	}
 }

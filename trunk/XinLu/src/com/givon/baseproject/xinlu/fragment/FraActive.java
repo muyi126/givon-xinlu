@@ -17,13 +17,18 @@ import android.view.ViewGroup;
 
 import com.givon.baseproject.xinlu.BaseFragment;
 import com.givon.baseproject.xinlu.R;
+import com.givon.baseproject.xinlu.interfaceview.ViewPageTopListener;
 /**
  * 个人中心
  * @author givon
  *
  */
 public class FraActive extends BaseFragment{
+	private ViewPageTopListener mListener;
 
+	public FraActive(ViewPageTopListener l ) {
+		mListener = l;
+	}
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

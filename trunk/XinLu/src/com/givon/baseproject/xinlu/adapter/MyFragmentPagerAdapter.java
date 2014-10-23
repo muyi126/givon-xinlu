@@ -8,7 +8,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 
 public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
-    private ArrayList<Fragment> fragmentsList;
+    private static ArrayList<Fragment> fragmentsList;
 
     public MyFragmentPagerAdapter(FragmentManager fm) {
         super(fm);
@@ -26,6 +26,7 @@ public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int arg0) {
+    	System.out.println("ARG):"+arg0);
         return fragmentsList.get(arg0);
     }
 

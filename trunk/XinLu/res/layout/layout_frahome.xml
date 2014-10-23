@@ -1,49 +1,44 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/font_black"
-    android:orientation="vertical" >
+    android:layout_height="match_parent" >
 
-    <com.givon.baseproject.xinlu.view.MyScrollView
-        android:id="@+id/sv_ScrollView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true"
-         >
+    <com.givon.baseproject.xinlu.view.RefreshableView
+        android:id="@+id/refreshable_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
 
-        <LinearLayout
+        <com.givon.baseproject.xinlu.view.MyScrollView
+            android:id="@+id/sv_ScrollView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:fillViewport="false" >
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" >
 
-                <EditText
-                    android:id="@+id/et_search"
+                <TextView
+                    android:id="@+id/tv_search"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/ic_launcher"
+                    android:gravity="center_vertical"
                     android:hint="搜索" />
 
                 <com.givon.baseproject.xinlu.view.TopDotPager
                     android:id="@+id/topDotPager"
                     android:layout_width="match_parent"
-                    android:layout_height="150dip" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" >
+                    android:layout_height="150dip"
+                    android:background="@color/font_blue" />
 
                 <LinearLayout
-                    android:id="@+id/linearLayout1"
+                    android:id="@+id/ly_top_bar"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:background="@color/font_gray"
                     android:paddingBottom="5dip"
                     android:paddingTop="10dip" >
 
@@ -92,17 +87,58 @@
                         android:scaleType="matrix"
                         android:src="#fff" />
                 </LinearLayout>
+
+                <com.givon.baseproject.xinlu.view.MyViewPager
+                    android:id="@+id/vPager"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:background="@color/font_black"
+                    android:flipInterval="30"
+                    android:minHeight="200dip"
+                    android:persistentDrawingCache="animation" />
             </LinearLayout>
+        </com.givon.baseproject.xinlu.view.MyScrollView>
+    </com.givon.baseproject.xinlu.view.RefreshableView>
 
-            <com.givon.baseproject.xinlu.view.MyViewPager
-                android:id="@+id/vPager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:background="@android:color/transparent"
-                android:flipInterval="30"
-                android:persistentDrawingCache="animation" />
-        </LinearLayout>
-    </com.givon.baseproject.xinlu.view.MyScrollView>
+    <LinearLayout
+        android:id="@+id/ly_top_bar_jiadi"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/font_gray"
+        android:paddingBottom="5dip"
+        android:visibility="gone"
+        android:paddingTop="10dip" >
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/tv_tab_1_jd"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1.0"
+            android:gravity="center"
+            android:text="11111"
+            android:textColor="@color/font_white"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tv_tab_2_jd"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1.0"
+            android:gravity="center"
+            android:text="222222"
+            android:textColor="@color/lightwhite"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tv_tab_3_jd"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1.0"
+            android:gravity="center"
+            android:text="333333"
+            android:textColor="@color/lightwhite"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+</RelativeLayout>

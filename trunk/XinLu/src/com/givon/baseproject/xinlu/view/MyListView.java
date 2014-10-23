@@ -12,8 +12,10 @@ package com.givon.baseproject.xinlu.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.widget.ListView;
 
-public class MyListView extends PullListView {
+public class MyListView extends ListView {
 
 	public MyListView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
@@ -36,5 +38,17 @@ public class MyListView extends PullListView {
 //		int expandSpec = MeasureSpec.makeMeasureSpec(Integer.MAX_VALUE >> 2, MeasureSpec.AT_MOST);
 //		super.onMeasure(widthMeasureSpec, expandSpec);
 //	}
+	
+	
+	@Override
+	public boolean dispatchTouchEvent(MotionEvent ev) {
+		return super.dispatchTouchEvent(ev);
+	}
+	
+	
+	@Override
+	public boolean onInterceptTouchEvent(MotionEvent arg0) {
+		return false;
+	}
 
 }

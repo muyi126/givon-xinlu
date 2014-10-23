@@ -15,6 +15,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import com.android.support.httpclient.HttpClientAsync;
 import com.givon.baseproject.xinlu.util.CrashHandler;
 
 public class BaseApplication extends Application {
@@ -38,6 +39,7 @@ public class BaseApplication extends Application {
 		mInstance = this;
 		mWidth = getResources().getDisplayMetrics().widthPixels;
 		mHeight = getResources().getDisplayMetrics().heightPixels;
+		HttpClientAsync.getInstance().setPrintLog(true);
 		CrashHandler crashHandler = CrashHandler.getInstance();
 		// 注册crashHandler
 		crashHandler.init(getApplicationContext());
