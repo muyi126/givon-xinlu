@@ -65,6 +65,10 @@ public class MainActivity extends BaseFragmentActivity {
 					FraHome.class.getSimpleName())) {
 				mFragmentMap.put(classz.getSimpleName(), toFragment);
 			}
+			if (classz.getSimpleName().equals(
+					FraPublish.class.getSimpleName())) {
+				mFragmentMap.put(classz.getSimpleName(), toFragment);
+			}
 		} else {
 			toFragment = mFragmentMap.get(classz.getSimpleName());
 		}
@@ -91,5 +95,12 @@ public class MainActivity extends BaseFragmentActivity {
 			}
 		}
 	}
+    
+    @Override
+    protected void onDestroy() {
+    	FraPublish fragment=(FraPublish) mFragmentMap.get(FraPublish.class.getSimpleName());
+    	fragment.onDestroy();
+    	super.onDestroy();
+    }
 
 }

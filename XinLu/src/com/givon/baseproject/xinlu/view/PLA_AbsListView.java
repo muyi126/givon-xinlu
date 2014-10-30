@@ -42,6 +42,7 @@ import android.widget.ListAdapter;
 import android.widget.Scroller;
 
 import com.givon.baseproject.xinlu.R;
+import com.givon.baseproject.xinlu.fragment.FraHome;
 
 /**
  * Base class that can be used to implement virtualized lists of items. A list does not have a spatial definition here. For instance,
@@ -426,6 +427,7 @@ public abstract class PLA_AbsListView extends PLA_AdapterView<ListAdapter> imple
 				int totalItemCount);
 
 		public void onScrollFirst();
+		public void onScroll();
 	}
 
 	public PLA_AbsListView(Context context) {
@@ -1329,6 +1331,7 @@ public abstract class PLA_AbsListView extends PLA_AdapterView<ListAdapter> imple
 			createScrollingCache();
 			mTouchMode = TOUCH_MODE_SCROLL;
 			mMotionCorrection = deltaY;
+			System.out.println("distance:"+distance+ " mTouchSlop:"+mTouchSlop+" mMotionCorrection:"+mMotionCorrection);
 			setPressed(false);
 			View motionView = getChildAt(mMotionPosition - mFirstPosition);
 			if (motionView != null) {
@@ -1443,31 +1446,39 @@ public abstract class PLA_AbsListView extends PLA_AdapterView<ListAdapter> imple
 						mScrollProfilingStarted = true;
 					}
 				}
-
+				if (null != mOnScrollListener) {
+					mOnScrollListener.onScroll();
+				}
 				if (y != mLastY) {
 					deltaY -= mMotionCorrection;
 					int incrementalDeltaY = mLastY != Integer.MIN_VALUE ? y - mLastY : deltaY;
 
 					// No need to do all this work if we're not going to move anyway
 					boolean atEdge = false;
+					
 					if (incrementalDeltaY != 0) {
 						atEdge = trackMotionScroll(deltaY, incrementalDeltaY);
 					}
 
 					// Check to see if we have bumped into the scroll limit
 					if (atEdge && getChildCount() > 0) {
-						// Treat this like we're starting a new scroll from the current
-						// position. This will let the user start scrolling back into
-						// content immediately rather than needing to scroll back to the
-						// point where they hit the limit first.
+						
+//						 Treat this like we're starting a new scroll from the current
+//						 position. This will let the user start scrolling back into
+//						 content immediately rather than needing to scroll back to the
+//						 point where they hit the limit first.
 						int motionPosition = findMotionRow(y);
 						if (motionPosition >= 0) {
+							System.out.println("卧槽");
 							final View motionView = getChildAt(motionPosition - mFirstPosition);
 							mMotionViewOriginalTop = motionView.getTop();
 						}
 						mMotionY = y;
 						mMotionPosition = motionPosition;
 						invalidate();
+						if (null != mOnScrollListener) {
+							mOnScrollListener.onScrollFirst();
+						}
 					}
 					mLastY = y;
 				}
@@ -1631,7 +1642,6 @@ public abstract class PLA_AbsListView extends PLA_AdapterView<ListAdapter> imple
 	public boolean onInterceptTouchEvent(MotionEvent ev) {
 		int action = ev.getAction();
 		View v;
-
 		switch (action & MotionEvent.ACTION_MASK) {
 		case MotionEvent.ACTION_DOWN: {
 			int touchMode = mTouchMode;
@@ -2229,11 +2239,12 @@ public abstract class PLA_AbsListView extends PLA_AdapterView<ListAdapter> imple
 		}
 
 		final int firstPosition = mFirstPosition;
-		if(firstPosition == 0 && firstTop >= listPadding.top && deltaY > 0){
-			if (null != mOnScrollListener) {
-				mOnScrollListener.onScrollFirst();
-			}
-		}
+		//TODO 这里判断过第一有bug
+//		if(firstPosition == 0 && firstTop >= listPadding.top && deltaY > 0){
+//			if (null != mOnScrollListener) {
+//				mOnScrollListener.onScrollFirst();
+//			}
+//		}
 		if (firstPosition == 0 && firstTop >= listPadding.top && deltaY >= 0) {
 			// Don't need to move views down if the top of the first position
 			// is already visible

@@ -35,7 +35,7 @@ public abstract class BaseListFragment<T> extends BaseFragment {
 	protected PullListView mListView;
 	protected ListAdapter mAdapter;
 	protected int mPageIndex = 1;
-	private BitmapUtils bitmapUtils;
+	protected BitmapUtils bitmapUtils;
 	protected TextView mErrorInfo;
 
 	@Override

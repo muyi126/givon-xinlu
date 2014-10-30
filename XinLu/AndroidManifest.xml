@@ -47,6 +47,10 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
+            android:name="com.givon.baseproject.xinlu.act.ActPublish"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
             android:name="com.givon.baseproject.xinlu.act.MainActivity"
             android:screenOrientation="portrait" >
         </activity>
@@ -59,11 +63,19 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
+            android:name="com.givon.baseproject.xinlu.act.ActSearch"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
             android:name="com.givon.baseproject.xinlu.act.ActRegisterPage"
             android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="com.givon.baseproject.xinlu.act.ActIdentifyNumPage"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.givon.baseproject.xinlu.act.TestDrawActivity"
             android:screenOrientation="portrait" >
         </activity>
         <activity

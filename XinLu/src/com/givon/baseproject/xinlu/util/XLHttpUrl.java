@@ -18,6 +18,7 @@ public class XLHttpUrl {
 	}
 	public static String Login = "/LoginRegister/Login";
 	public static String Register = "/LoginRegister/Register";
+	public static String GetBanners = "/Index/GetBanners";
 	
 
 }

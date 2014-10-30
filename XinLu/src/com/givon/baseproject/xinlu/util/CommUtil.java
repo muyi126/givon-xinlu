@@ -9,10 +9,20 @@
 
 package com.givon.baseproject.xinlu.util;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
+import com.givon.baseproject.xinlu.act.MainActivity;
 
 public class CommUtil {
 
@@ -67,4 +77,67 @@ public class CommUtil {
 		final float scale = context.getResources().getDisplayMetrics().density;
 		return (int) (pxValue / scale + 0.5f);
 	}
+	
+//	public static Bitmap loadImageFromUrl(String url, int sc)
+//    {
+//
+//        URL m;
+//        InputStream i = null;
+//        BufferedInputStream bis = null;
+//        ByteArrayOutputStream out = null;
+//
+//        if (url == null)
+//            return null;
+//        try
+//        {
+//            m = new URL(url);
+//            i = (InputStream) m.getContent();
+//            bis = new BufferedInputStream(i, 1024 * 4);
+//            out = new ByteArrayOutputStream();
+//            int len = 0;
+//
+//            while ((len = bis.read(isBuffer)) != -1)
+//            {
+//                out.write(isBuffer, 0, len);
+//            }
+//            out.close();
+//            bis.close();
+//        } catch (MalformedURLException e1)
+//        {
+//            e1.printStackTrace();
+//            return null;
+//        } catch (IOException e)
+//        {
+//            e.printStackTrace();
+//        }
+//        if (out == null)
+//            return null;
+//        byte[] data = out.toByteArray();
+//        BitmapFactory.Options options = new BitmapFactory.Options();
+//        options.inJustDecodeBounds = true;
+//        BitmapFactory.decodeByteArray(data, 0, data.length, options);
+//        options.inJustDecodeBounds = false;
+//        int be = (int) (options.outHeight / (float) sc);
+//        if (be <= 0)
+//        {
+//            be = 1;
+//        } else if (be > 3)
+//        {
+//            be = 3;
+//        }
+//        options.inSampleSize = be;
+//        Bitmap bmp =null;
+//        try
+//        {
+//            bmp = BitmapFactory.decodeByteArray(data, 0, data.length, options); //返回缩略图
+//        } catch (OutOfMemoryError e)
+//        {
+//            // TODO: handle exception
+//            ToastUtils.showMessage("Tile Loader (241) Out Of Memory Error " + e.getLocalizedMessage())
+//        
+//            System.gc();
+//            bmp =null;
+//        }
+//        return bmp;
+//    }
 }

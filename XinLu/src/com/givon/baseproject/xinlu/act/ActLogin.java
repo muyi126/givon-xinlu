@@ -104,6 +104,7 @@ public class ActLogin extends BaseActivity implements Callback {
 			
 			@Override
 			public void onHttpSuccess(Object obj) {
+				dismissWaitingDialog();
 				MemberEntity entity = (MemberEntity) obj;
 				if(null!=entity){
 					ShareCookie.saveUserInfo(entity);
@@ -116,11 +117,12 @@ public class ActLogin extends BaseActivity implements Callback {
 			
 			@Override
 			public void onHttpStarted() {
-				
+				showWaitingDialog("请稍后");
 			}
 			
 			@Override
 			public void onHttpFailure(Exception e, String message) {
+				dismissWaitingDialog();
 				if(!StringUtil.isEmpty(message)){
 					ToastUtils.showMessage(message);
 				}

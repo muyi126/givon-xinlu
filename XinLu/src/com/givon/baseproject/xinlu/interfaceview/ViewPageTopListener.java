@@ -12,4 +12,5 @@ package com.givon.baseproject.xinlu.interfaceview;
 
 public interface ViewPageTopListener {
 	void onFirst();
+	void onScroll();
 }

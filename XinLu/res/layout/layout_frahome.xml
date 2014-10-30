@@ -3,30 +3,34 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
+    <TextView
+        android:id="@+id/tv_search"
+        android:layout_width="match_parent"
+        android:layout_height="40dip"
+        android:drawableLeft="@drawable/ic_launcher"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:gravity="center_vertical"
+        android:hint="搜索" />
+
     <com.givon.baseproject.xinlu.view.RefreshableView
         android:id="@+id/refreshable_view"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_search"
         android:orientation="vertical" >
 
         <com.givon.baseproject.xinlu.view.MyScrollView
             android:id="@+id/sv_ScrollView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fillViewport="false" >
+            android:scrollbars="none"
+            >
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" >
-
-                <TextView
-                    android:id="@+id/tv_search"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/ic_launcher"
-                    android:gravity="center_vertical"
-                    android:hint="搜索" />
 
                 <com.givon.baseproject.xinlu.view.TopDotPager
                     android:id="@+id/topDotPager"
@@ -105,10 +109,11 @@
         android:id="@+id/ly_top_bar_jiadi"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_search"
         android:background="@color/font_gray"
         android:paddingBottom="5dip"
-        android:visibility="gone"
-        android:paddingTop="10dip" >
+        android:paddingTop="10dip"
+        android:visibility="gone" >
 
         <TextView
             android:id="@+id/tv_tab_1_jd"

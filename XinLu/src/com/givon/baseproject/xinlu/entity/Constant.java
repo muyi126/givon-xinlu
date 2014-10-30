@@ -30,5 +30,6 @@ public class Constant {
 	public static final String COOKIE_FILE = "cookie_file";
 	public static final String APP_TOKEN = "app_token";
 	public static final String IS_LOGIN_AUTH = "is_login";
+	public static final String DATA = "_data";
 
 }
