@@ -14,7 +14,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.ScrollView;
 import android.widget.Scroller;
 import android.widget.TextView;
 
@@ -224,6 +223,9 @@ public class RefreshableView extends LinearLayout {
     private void doMovement(int moveY) {
         // TODO Auto-generated method stub
         LinearLayout.LayoutParams lp = (LayoutParams) refreshView.getLayoutParams();
+        System.out.println("moveY:"+moveY);
+        System.out.println("moveY_f1:"+lp.topMargin);
+        System.out.println("moveY_f2:"+moveY * 0.3F);
         if(moveY>0){
             //获取view的上边距
             float f1 =lp.topMargin;
@@ -234,7 +236,7 @@ public class RefreshableView extends LinearLayout {
             //修改后刷新
             refreshView.setLayoutParams(lp);
             refreshView.invalidate();
-            invalidate();
+//            invalidate();
         }
         else 
         {
@@ -247,14 +249,14 @@ public class RefreshableView extends LinearLayout {
                 //修改后刷新
                 refreshView.setLayoutParams(lp);
                 refreshView.invalidate();
-                invalidate();
+//                invalidate();
             }
             else 
             {
                 
             }
         }
-        
+        System.out.println("iiiii:"+lp.topMargin);
         timeTextView.setVisibility(View.VISIBLE);
 //        if(refreshTime!= null){
 //            setRefreshTime(refreshTime);
@@ -287,14 +289,16 @@ public class RefreshableView extends LinearLayout {
      */
     public void finishRefresh(){
         Log.i(TAG, "执行了=====finishRefresh");
-         LinearLayout.LayoutParams lp= (LinearLayout.LayoutParams)this.refreshView.getLayoutParams();
-            int i = lp.topMargin;
-            refreshIndicatorView.setVisibility(View.VISIBLE);
-            timeTextView.setVisibility(View.VISIBLE);
-            scroller.startScroll(0, i, 0, refreshTargetTop);
-            invalidate();
-            isRefreshing = false;  
-            LastRefreshTime=Calendar.getInstance();
+        if(isRefreshing){
+        	LinearLayout.LayoutParams lp= (LinearLayout.LayoutParams)this.refreshView.getLayoutParams();
+        	int i = lp.topMargin;
+        	refreshIndicatorView.setVisibility(View.VISIBLE);
+        	timeTextView.setVisibility(View.VISIBLE);
+        	scroller.startScroll(0, i, 0, refreshTargetTop);
+        	invalidate();
+        	isRefreshing = false;  
+        	LastRefreshTime=Calendar.getInstance();
+        }
     }
 
     

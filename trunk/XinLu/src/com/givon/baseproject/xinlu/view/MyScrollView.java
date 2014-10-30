@@ -18,9 +18,9 @@ import android.view.MotionEvent;
 import android.widget.ScrollView;
 
 public class MyScrollView extends ScrollView {
-//	private GestureDetector detector;
-	private TouchListenerS touchListenerS;
-	private boolean isHitTopView;
+	// private GestureDetector detector;
+	// private TouchListenerS touchListenerS;
+	private boolean isHitTopView = false;
 	private ScrollViewListener scrollViewListener = null;
 
 	public ScrollViewListener getScrollViewListener() {
@@ -36,7 +36,7 @@ public class MyScrollView extends ScrollView {
 	}
 
 	public void setHitTopView(boolean isHitTopView) {
-		System.out.println("setHitTopView:"+isHitTopView);
+		System.out.println("setHitTopView:" + isHitTopView);
 		this.isHitTopView = isHitTopView;
 	}
 
@@ -44,35 +44,39 @@ public class MyScrollView extends ScrollView {
 		super(context, attrs, defStyle);
 	}
 
-
-	public TouchListenerS getTouchListenerS() {
-		return touchListenerS;
-	}
-
-	public void setTouchListenerS(TouchListenerS touchListenerS) {
-		this.touchListenerS = touchListenerS;
-	}
+	// public TouchListenerS getTouchListenerS() {
+	// return touchListenerS;
+	// }
+	//
+	// public void setTouchListenerS(TouchListenerS touchListenerS) {
+	// this.touchListenerS = touchListenerS;
+	// }
 
 	public MyScrollView(Context context) {
 		super(context);
 	}
 
-//	@Override
-//	public boolean dispatchTouchEvent(MotionEvent ev) {
-//		// this.detector.onTouchEvent(ev);
-//		// boolean ret = super.dispatchTouchEvent(ev);
-//		// if (ret) {
-//		// requestDisallowInterceptTouchEvent(true);
-//		// }
-//		return super.dispatchTouchEvent(ev);
-//	}
+	// @Override
+	// public boolean dispatchTouchEvent(MotionEvent ev) {
+	// // this.detector.onTouchEvent(ev);
+	// // boolean ret = super.dispatchTouchEvent(ev);
+	// // if (ret) {
+	// // requestDisallowInterceptTouchEvent(true);
+	// // }
+	// return super.dispatchTouchEvent(ev);
+	// }
 
 	// 滑动距离及坐标
 	private float xDistance, yDistance, xLast, yLast;
 
 	public MyScrollView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-//		detector = new GestureDetector(this);
+		// detector = new GestureDetector(this);
+	}
+
+	@Override
+	public boolean dispatchTouchEvent(MotionEvent ev) {
+		return super.dispatchTouchEvent(ev);
 	}
 
 	@Override
@@ -95,13 +99,26 @@ public class MyScrollView extends ScrollView {
 				return false;
 			}
 		}
-		System.out.println("isHitTopView:"+isHitTopView);
 		if (isHitTopView) {
 			return false;
-		}else {
-			return super.onInterceptTouchEvent(ev);
-		}
-		
+		} else {
+//			if (ev.getAction() == MotionEvent.ACTION_MOVE) {
+//				System.out.println("ACTION_MOVE");
+//				 super.onInterceptTouchEvent(ev);
+//				return true;
+//			} else if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+//				System.out.println("ACTION_DOWN");
+				return super.onInterceptTouchEvent(ev);
+			}
+//			return false;
+//		}
+
+	}
+
+	@Override
+	public boolean onTouchEvent(MotionEvent ev) {
+		System.out.println("onTouchEvent:"+ev.getAction());
+		return super.onTouchEvent(ev);
 	}
 
 	@Override
@@ -111,76 +128,71 @@ public class MyScrollView extends ScrollView {
 			scrollViewListener.onScrollChanged(this, x, y, oldx, oldy);
 		}
 	}
-//
-//	@Override
-//	public boolean onDown(MotionEvent e) {
-//		// TODO Auto-generated method stub
-//		return false;
-//	}
-//
-//	@Override
-//	public void onShowPress(MotionEvent e) {
-//		// TODO Auto-generated method stub
-//
-//	}
-//
-//	@Override
-//	public boolean onSingleTapUp(MotionEvent e) {
-//		// TODO Auto-generated method stub
-//		return false;
-//	}
-//
-//	@Override
-//	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-//		// TODO Auto-generated method stub
-//		return false;
-//	}
-//
-//	@Override
-//	public void onLongPress(MotionEvent e) {
-//		// TODO Auto-generated method stub
-//
-//	}
-//
-//	@Override
-//	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-//		if (e1.getY() - e2.getY() > 80) {
-//			if (touchListenerS != null) {
-//				touchListenerS.scrollUp();
-//			}
-//		} else if (e1.getY() - e2.getY() < -80) {
-//			if (touchListenerS != null) {
-//				touchListenerS.scrollDown();
-//			}
-//		} else
-//			return false;
-//		return true;
-//	}
 
-	private boolean isCanScall(MotionEvent event) {
+	//
+	// @Override
+	// public boolean onDown(MotionEvent e) {
+	// // TODO Auto-generated method stub
+	// return false;
+	// }
+	//
+	// @Override
+	// public void onShowPress(MotionEvent e) {
+	// // TODO Auto-generated method stub
+	//
+	// }
+	//
+	// @Override
+	// public boolean onSingleTapUp(MotionEvent e) {
+	// // TODO Auto-generated method stub
+	// return false;
+	// }
+	//
+	// @Override
+	// public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+	// // TODO Auto-generated method stub
+	// return false;
+	// }
+	//
+	// @Override
+	// public void onLongPress(MotionEvent e) {
+	// // TODO Auto-generated method stub
+	//
+	// }
+	//
+	// @Override
+	// public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+	// if (e1.getY() - e2.getY() > 80) {
+	// if (touchListenerS != null) {
+	// touchListenerS.scrollUp();
+	// }
+	// } else if (e1.getY() - e2.getY() < -80) {
+	// if (touchListenerS != null) {
+	// touchListenerS.scrollDown();
+	// }
+	// } else
+	// return false;
+	// return true;
+	// }
 
-		return false;
-	}
-	
-//	@Override
-//	public boolean onTouchEvent(MotionEvent ev) {
-//		if(ev.getAction() == MotionEvent.ACTION_DOWN){
-//				return false;
-//		}
-//		return super.onTouchEvent(ev);
-//	}
+	// @Override
+	// public boolean onTouchEvent(MotionEvent ev) {
+	// if(ev.getAction() == MotionEvent.ACTION_DOWN){
+	// return false;
+	// }
+	// return super.onTouchEvent(ev);
+	// }
 
-	public interface TouchListenerS {
-		void scrollUp();
-
-		void scrollDown();
-	}
+	// public interface TouchListenerS {
+	// void scrollUp();
+	//
+	// void scrollDown();
+	// }
 
 	public interface ScrollViewListener {
 
 		void onScrollChanged(MyScrollView scrollView, int x, int y, int oldx, int oldy);
 
 	}
-	
-	
+
 }

@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 import com.givon.baseproject.xinlu.R;
+import com.givon.baseproject.xinlu.entity.Constant;
 import com.givon.baseproject.xinlu.util.StringUtil;
 import com.givon.baseproject.xinlu.view.AppDialog;
 import com.givon.baseproject.xinlu.view.AppTitleBar;
@@ -59,6 +60,16 @@ public class BaseFragment extends Fragment {
 			Log.e("ss", e.getMessage());
 		}
 
+	}
+	protected void showActivity(Class<?> classz,String data) {
+		try {
+			Intent intent = new Intent(getActivity(), classz);
+			intent.putExtra(Constant.DATA, data);
+			startActivity(intent);
+		} catch (Exception e) {
+			Log.e("ss", e.getMessage());
+		}
+		
 	}
 
 	public void showWaitingDialog() {

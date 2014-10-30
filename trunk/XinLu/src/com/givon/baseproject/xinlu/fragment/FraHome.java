@@ -14,6 +14,8 @@ import java.util.ArrayList;
 
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.DisplayMetrics;
@@ -27,20 +29,29 @@ import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.android.support.httpclient.HttpCallBack;
+import com.android.support.httpclient.HttpClientAsync;
+import com.android.support.httpclient.HttpParams;
 import com.givon.baseproject.xinlu.BaseApplication;
 import com.givon.baseproject.xinlu.BaseFragment;
 import com.givon.baseproject.xinlu.BaseListFragment;
 import com.givon.baseproject.xinlu.R;
+import com.givon.baseproject.xinlu.act.ActSearch;
 import com.givon.baseproject.xinlu.adapter.MyFragmentPagerAdapter;
+import com.givon.baseproject.xinlu.entity.BannerEntity;
 import com.givon.baseproject.xinlu.interfaceview.ViewPageTopListener;
+import com.givon.baseproject.xinlu.util.ToastUtils;
+import com.givon.baseproject.xinlu.util.XLHttpUrl;
 import com.givon.baseproject.xinlu.view.MyScrollView;
 import com.givon.baseproject.xinlu.view.MyScrollView.ScrollViewListener;
 import com.givon.baseproject.xinlu.view.MyViewPager;
 import com.givon.baseproject.xinlu.view.RefreshableView;
+import com.givon.baseproject.xinlu.view.RefreshableView.RefreshListener;
 import com.givon.baseproject.xinlu.view.TopDotPager;
 
 /**
@@ -48,7 +59,7 @@ import com.givon.baseproject.xinlu.view.TopDotPager;
  * @author givon
  * 
  */
-public class FraHome extends BaseFragment implements ViewPageTopListener,OnClickListener{
+public class FraHome extends BaseFragment implements ViewPageTopListener,OnClickListener, RefreshListener{
 	Resources resources;
 	private MyViewPager mPager;
 	private ArrayList<Fragment> fragmentsList;
@@ -57,7 +68,7 @@ public class FraHome extends BaseFragment implements ViewPageTopListener,OnClick
 	private TextView tvTabNew_jiadi, tvTabHot_jiadi, tvTree_jiadi;
 	// private MyListView mListView;
 	private MyScrollView mMyScrollView;
-	private boolean isHit = false;// 是否隐藏
+	public static boolean isHit = false;// 是否隐藏
 	private int currIndex = 0;
 	private int bottomLineWidth;
 	private int offset = 0;
@@ -82,6 +93,7 @@ public class FraHome extends BaseFragment implements ViewPageTopListener,OnClick
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = getActivity().getLayoutInflater().inflate(R.layout.layout_frahome, null);
 		mRefreshableView = (RefreshableView) view.findViewById(R.id.refreshable_view);
+		mRefreshableView.setRefreshListener(this);
 		mTopBarLayout = (LinearLayout) view.findViewById(R.id.ly_top_bar);
 		mTv_SearchView = (TextView) view.findViewById(R.id.tv_search);
 		mTv_SearchView.setOnClickListener(this);
@@ -126,16 +138,17 @@ public class FraHome extends BaseFragment implements ViewPageTopListener,OnClick
 				mTopBarLayout.getLocationInWindow(location);
 				System.out.println("HH:" + location[0] + " " + location[1] + " " + location[2]
 						+ " " + location[3]);
-				if (location[1] - 40 < 0 && !isHit) {
+				if (location[1]  < 0 && !isHit) {
 					// 高度小于0 Scroll不监听上拉下拉事件
+					System.out.println("回掉onScrollChanged");
 					mMyScrollView.setHitTopView(true);
 					mMyScrollView.setPressed(false);
 					mMyScrollView.setClickable(false);
 					isHit = true;
 				}
-				if (location[1] - 40 < 0 && mTopBarLayout_Jiadi.getVisibility() == View.GONE) {
+				if (location[1]  < 0 && mTopBarLayout_Jiadi.getVisibility() == View.GONE) {
 					mTopBarLayout_Jiadi.setVisibility(View.VISIBLE);
-				} else if (location[1] - 40 > 0
+				} else if (location[1]  > 0
 						&& mTopBarLayout_Jiadi.getVisibility() == View.VISIBLE) {
 					mTopBarLayout_Jiadi.setVisibility(View.GONE);
 				}
@@ -271,17 +284,75 @@ public class FraHome extends BaseFragment implements ViewPageTopListener,OnClick
 	@Override
 	public void onFirst() {
 		if (isHit) {
+			System.out.println("回掉onFirst");
 			mMyScrollView.setHitTopView(false);
 			mMyScrollView.setPressed(true);
 			mMyScrollView.setClickable(true);
 			isHit = false;
 		}
+		
 	}
 
 	@Override
 	public void onClick(View v) {
-		// TODO Auto-generated method stub
-		
+		if(v==mTv_SearchView){
+			showActivity(ActSearch.class);
+		}
+	}
+	
+	
+	private void getBanner() {
+		HttpClientAsync httpClientAsync = HttpClientAsync.getInstance();
+		httpClientAsync.get(XLHttpUrl.getUrl(XLHttpUrl.GetBanners),new HttpParams(),XLHttpUrl.CONTENT_TYPE, new HttpCallBack() {
+			
+			@Override
+			public void onHttpSuccess(Object obj) {
+				mRefreshableView.finishRefresh();
+				BannerEntity entity = (BannerEntity) obj;
+				if(null!=entity&&null!=entity.getData()&&entity.getData().size()>0){
+					
+				}
+			}
+			
+			@Override
+			public void onHttpStarted() {
+				
+			}
+			
+			@Override
+			public void onHttpFailure(Exception e, String message) {
+				mRefreshableView.finishRefresh();
+				System.out.println("message:"+message);
+			}
+		},BannerEntity.class);
+	}
+
+	@Override
+	public void onRefresh(RefreshableView view) {
+		//伪处理
+//				handler.sendEmptyMessageDelayed(1, 2000);
+		getBanner();
+	}
+//	Handler handler = new Handler() {
+//		public void handleMessage(Message message) {
+//			super.handleMessage(message);
+//			mRefreshableView.finishRefresh();
+//			ToastUtils.showMessage(R.string.toast_text);
+//		};
+//	};
+//如果ViewPage的View滑动会调用
+	@Override
+	public void onScroll() {
+		int[] location = new int[4];
+		mTopBarLayout.getLocationInWindow(location);
+		if (location[1] > 0 ) {
+			System.out.println("回掉onScroll");
+			// 高度小于0 Scroll不监听上拉下拉事件
+			mMyScrollView.setHitTopView(false);
+			mMyScrollView.setPressed(true);
+			mMyScrollView.setClickable(true);
+			isHit = false;
+		}
 	}
 
 }

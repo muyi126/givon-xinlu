@@ -155,6 +155,14 @@ public class FraTuiJian extends BaseFragment {
 					mPageTopListener.onFirst();
 				}
 			}
+
+			@Override
+			public void onScroll() {
+				if(null!=mPageTopListener){
+					mPageTopListener.onScroll();
+				}
+				
+			}
         });
 //		mAdapter = new MySimpleAdapter(getActivity(), R.layout.sample_item);
 //

@@ -37,6 +37,7 @@ import android.view.accessibility.AccessibilityEvent;
 import android.widget.ListAdapter;
 
 import com.givon.baseproject.xinlu.R;
+import com.givon.baseproject.xinlu.fragment.FraHome;
 
 
 /*
@@ -2133,6 +2134,7 @@ public class PLA_ListView extends PLA_AbsListView {
 			// descendants.
 			return false;
 		}
+
 		return super.onTouchEvent(ev);
 	}
 
@@ -2229,7 +2231,7 @@ public class PLA_ListView extends PLA_AbsListView {
 		return new long[0];
 	}
 
-	/**
+	/** 
 	 * Clear any choices previously set
 	 */
 	public void clearChoices() {

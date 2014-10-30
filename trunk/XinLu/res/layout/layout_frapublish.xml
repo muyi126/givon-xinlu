@@ -1,8 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:id="@+id/drawroot"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     android:orientation="vertical" >
-    
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dip" >
+
+        <Button
+            android:id="@+id/drawundobtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="上一步" />
+
+        <Button
+            android:id="@+id/drawredobtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/drawundobtn"
+            android:text="下一步" />
+
+        <Button
+            android:id="@+id/finish"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="15dip"
+            android:text="完成" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+
+        <LinearLayout
+            android:id="@+id/drawmiddle"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:orientation="horizontal" >
+
+            <com.givon.baseproject.xinlu.view.DrawView
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/drawview"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent" >
+            </com.givon.baseproject.xinlu.view.DrawView>
+        </LinearLayout>
+
+        <include layout="@layout/toolbarright" />
+
+        <LinearLayout
+            android:id="@+id/drawbottom"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical" >
+
+            <FrameLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/drawbottombar" >
+
+                <!--
+                <include layout="@layout/markerpic" />
+
+                <include layout="@layout/crayonpic" />
+
+                <include layout="@layout/colorpic" />
+
+                <include layout="@layout/stamppenpic" />
+
+                
+
+                <include layout="@layout/eraserpic" />
+
+                <include layout="@layout/stickerpic" />
+                -->
+
+                <include layout="@layout/geometrypic" />
+
+                <include layout="@layout/tuyapic" />
+
+                <include layout="@layout/backgroundpic" />
+
+                <include layout="@layout/stickerpic" />
+                <!--
+                <include layout="@layout/picpic" />
+
+                <include layout="@layout/wordpic" />
+                -->
+            </FrameLayout>
+
+            <include layout="@layout/toolbarbottom" />
+        </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>
