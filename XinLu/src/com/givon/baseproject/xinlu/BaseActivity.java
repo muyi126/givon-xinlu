@@ -182,4 +182,11 @@ public abstract class BaseActivity extends Activity {
 		ibuilder.setNegativeButton(R.string.cancel, listener);
 		ibuilder.create().show();
 	}
+	
+	public void setUpAndButtomBarVisible(boolean isVisible) {
+
+	}
+	public void setEditViewVisible(boolean isVisible) {
+		
+	}
 }

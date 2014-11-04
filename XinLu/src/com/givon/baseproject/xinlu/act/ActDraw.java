@@ -1,23 +1,9 @@
-/* 
- * Copyright 2014 ShangDao.Ltd  All rights reserved.
- * SiChuan ShangDao.Ltd PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- * 
- * @FraHome.java  2014年10月16日 上午9:12:57 - Guzhu
- * @author Guzhu
- * @email:muyi126@163.com
- * @version 1.0
- */
+package com.givon.baseproject.xinlu.act;
 
-package com.givon.baseproject.xinlu.fragment;
-
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
-import android.R.integer;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -31,7 +17,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images.Thumbnails;
 import android.provider.MediaStore.Video;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -51,21 +36,13 @@ import com.givon.baseproject.draw.util.DrawAttribute;
 import com.givon.baseproject.draw.util.GeometryUtil;
 import com.givon.baseproject.draw.util.StickerUtil;
 import com.givon.baseproject.draw.util.TuYaUtil;
-import com.givon.baseproject.xinlu.BaseFragment;
+import com.givon.baseproject.xinlu.BaseActivity;
 import com.givon.baseproject.xinlu.R;
-import com.givon.baseproject.xinlu.act.ActDrawWord;
-import com.givon.baseproject.xinlu.act.ActPublish;
 import com.givon.baseproject.xinlu.entity.Constant;
 import com.givon.baseproject.xinlu.entity.DetailImages;
-import com.givon.baseproject.xinlu.util.BitmapHelp;
 import com.givon.baseproject.xinlu.view.DrawView;
 
-/**
- * 发布
- * @author givon
- * 
- */
-public class FraPublish extends BaseFragment {
+public class ActDraw extends BaseActivity {
 	private DrawView drawView;
 	private LinearLayout rightBar;
 	private LinearLayout bottomBar;
@@ -73,27 +50,14 @@ public class FraPublish extends BaseFragment {
 	// private HorizontalScrollView markerList;
 	// private HorizontalScrollView crayonList;
 	// private HorizontalScrollView colorList;
-	private HorizontalScrollView stamppenList;
-	private HorizontalScrollView backgroundList;
+	 private HorizontalScrollView stamppenList;
+	 private HorizontalScrollView backgroundList;
 	// private HorizontalScrollView eraserList;
-	private LinearLayout stickerList;
+	 private LinearLayout stickerList;
 	private LinearLayout geometryTool;
 	private LinearLayout rightPhotoToo_ly;
 	private LinearLayout tuyaTool;
-	private Activity activity;
-	private View mView;
 	private Button saveButton;
-	private ArrayList<DetailImages> filesList = new ArrayList<DetailImages>();
-	private int currentBitMap = 0;
-	private final static int PUBLISH_SHOW_RESULT = 12311;
-	//文字
-	private final static int PUBLISH_SHOW_DRAWWORD_RESULT = 12312;
-	//涂鸦
-	private final static int PUBLISH_SHOW_DRAWTUYA_RESULT = 12313;
-	//图案
-	private final static int PUBLISH_SHOW_DRAWTUAN_RESULT = 12314;
-	//滤镜
-	private final static int PUBLISH_SHOW_DRAWLVJING_RESULT = 12315;
 
 	// private LinearLayout picTool;
 	// private LinearLayout wordTool;
@@ -101,37 +65,28 @@ public class FraPublish extends BaseFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		activity = getActivity();
-		activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+		// requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		mView = activity.getLayoutInflater().inflate(R.layout.layout_frapublish, null);
-		rightPhotoToo_ly = (LinearLayout) mView.findViewById(R.id.ly_photos);
-		saveButton = (Button) mView.findViewById(R.id.finish);
+		setContentView(R.layout.layout_frapublish);
+		rightPhotoToo_ly = (LinearLayout) this.findViewById(R.id.ly_photos);
+		
 		ArrayList<SLBitmap> photos = viewPhoto();
 		for (int i = 0; i < photos.size(); i++) {
-			ImageView imageView = new ImageView(activity);
+			ImageView imageView = new ImageView(this);
 			imageView.setTag(photos.get(i));
-			LayoutParams params = new LayoutParams(60, 60);
+			LayoutParams params = new LayoutParams(60,60);
 			imageView.setBackgroundDrawable(new BitmapDrawable(photos.get(i).bitmap));
 			rightPhotoToo_ly.addView(imageView, params);
 			imageView.setOnClickListener(new OnClickListener() {
-
+				
 				@Override
 				public void onClick(View v) {
-					SLBitmap obj = (SLBitmap) v.getTag();
-					if (obj.isCheck) {
+					SLBitmap obj = (SLBitmap)v.getTag();
+					if(obj.isCheck){
 						obj.isCheck = false;
-						Bitmap bmp;
-						try {
-							bmp = BitmapHelp.getBitpMap(new File(obj.path));
-							if (null != bmp) {
-								drawView.addStickerBitmap(bmp);
-							}
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					} else {
+						drawView.addStickerBitmap(BitmapFactory.decodeFile(obj.path));
+					}else {
 						obj.isCheck = true;
 						drawView.deleteStickerBitmap(null);
 					}
@@ -143,8 +98,9 @@ public class FraPublish extends BaseFragment {
 		// ImageView imageView = (ImageView) findViewById(R.id.marker01);
 		// imageView.scrollTo(0, 0);
 		// brushDrawableId = R.id.marker01;
-		rightBar = (LinearLayout) mView.findViewById(R.id.drawright);
-		bottomBar = (LinearLayout) mView.findViewById(R.id.drawbottom);
+		saveButton = (Button) this.findViewById(R.id.finish);
+		rightBar = (LinearLayout) this.findViewById(R.id.drawright);
+		bottomBar = (LinearLayout) this.findViewById(R.id.drawbottom);
 		// 此处有用处，切勿删除
 		rightBar.setOnClickListener(new OnClickListener() {
 			@Override
@@ -157,34 +113,35 @@ public class FraPublish extends BaseFragment {
 			public void onClick(View v) {
 			}
 		});
-		drawView = (DrawView) mView.findViewById(R.id.drawview);
-		drawView.setFraPublish(this);
-		// Intent intent = this.getIntent();
-		// Bundle bundle = intent.getExtras();
-		// if (bundle != null) {
-		// String backgroundBitmapPath = bundle
-		// .getString("com.example.finaldesign.BackgroundBitmapPath");
-		// Bitmap bitmap = BitmapFactory.decodeFile(backgroundBitmapPath);
-		// drawView.setBackgroundBitmap(bitmap, false);
-		// }
-		geometryTool = (LinearLayout) mView.findViewById(R.id.geometrytool);
-		tuyaTool = (LinearLayout) mView.findViewById(R.id.tuyatool);
-		backgroundList = (HorizontalScrollView) mView.findViewById(R.id.backgroundlist);
-		stickerList = (LinearLayout) mView.findViewById(R.id.stickerlist);
-//		geometryTool.setVisibility(View.VISIBLE);
-//		tuyaTool.setVisibility(View.INVISIBLE);
-//		backgroundList.setVisibility(View.INVISIBLE);
-//		stickerList.setVisibility(View.INVISIBLE);
+		drawView = (DrawView) this.findViewById(R.id.drawview);
+		Intent intent = this.getIntent();
+		Bundle bundle = intent.getExtras();
+		if (bundle != null) {
+			String backgroundBitmapPath = bundle
+					.getString("com.example.finaldesign.BackgroundBitmapPath");
+			Bitmap bitmap = BitmapFactory.decodeFile(backgroundBitmapPath);
+			drawView.setBackgroundBitmap(bitmap, false);
+		}
+		geometryTool = (LinearLayout) this.findViewById(R.id.geometrytool);
+		tuyaTool = (LinearLayout) this.findViewById(R.id.tuyatool);
+		backgroundList = (HorizontalScrollView) this.findViewById(R.id.backgroundlist);
+		stickerList = (LinearLayout) this.findViewById(R.id.stickerlist);
+		geometryTool.setVisibility(View.VISIBLE);
+		tuyaTool.setVisibility(View.INVISIBLE);
+		backgroundList.setVisibility(View.INVISIBLE);
+		stickerList.setVisibility(View.INVISIBLE);
 		// 下面的菜单
-		TextView drawTextButton = (TextView) mView.findViewById(R.id.drawText);
-		TextView drawTuyaButton = (TextView) mView.findViewById(R.id.drawTuya);
-		TextView drawMubanBUtton = (TextView) mView.findViewById(R.id.drawMuban);
-		TextView drawLvjinButton = (TextView) mView.findViewById(R.id.drawLvjin);
-		TextView drawTuanButton = (TextView) mView.findViewById(R.id.drawTuan);
+		TextView drawTextButton = (TextView) this.findViewById(R.id.drawText);
+		TextView drawTuyaButton = (TextView) this.findViewById(R.id.drawTuya);
+		TextView drawMubanBUtton = (TextView) this.findViewById(R.id.drawMuban);
+		TextView drawLvjinButton = (TextView) this.findViewById(R.id.drawLvjin);
+		TextView drawTuanButton = (TextView) this.findViewById(R.id.drawTuan);
 		// 上面的菜单
-		ImageButton visibleButton = (ImageButton) mView.findViewById(R.id.drawvisiblebtn);
-		Button undoButton = (Button) mView.findViewById(R.id.drawundobtn);
-		Button redoButton = (Button) mView.findViewById(R.id.drawredobtn);
+		// ImageButton drawbackButton = (ImageButton) this.findViewById(R.id.drawbackbtn);
+		// ImageButton saveButton = (ImageButton) this.findViewById(R.id.drawsavebtn);
+		ImageButton visibleButton = (ImageButton) this.findViewById(R.id.drawvisiblebtn);
+		Button undoButton = (Button) this.findViewById(R.id.drawundobtn);
+		Button redoButton = (Button) this.findViewById(R.id.drawredobtn);
 		// 选择文字
 		drawTextButton.setOnTouchListener(new OnTouchListener() {
 
@@ -196,17 +153,11 @@ public class FraPublish extends BaseFragment {
 					break;
 				case MotionEvent.ACTION_UP:
 					v.setBackgroundColor(0x00ffffff);
-//					geometryTool.setVisibility(View.VISIBLE);
-//					tuyaTool.setVisibility(View.INVISIBLE);
-//					backgroundList.setVisibility(View.INVISIBLE);
-//					stickerList.setVisibility(View.INVISIBLE);
-//					drawView.setCanDraw(false);
-					
-					DetailImages image = drawView.saveBitmap();
-					filesList.add(image);
-					Intent intent = new Intent(getActivity(),ActDrawWord.class);
-					intent.putExtra(Constant.DATA, image);
-					getActivity().startActivityForResult(intent, PUBLISH_SHOW_DRAWWORD_RESULT);
+					geometryTool.setVisibility(View.VISIBLE);
+					tuyaTool.setVisibility(View.INVISIBLE);
+					backgroundList.setVisibility(View.INVISIBLE);
+					stickerList.setVisibility(View.INVISIBLE);
+					drawView.setCanDraw(false);
 					break;
 				case MotionEvent.ACTION_CANCEL:
 					v.setBackgroundColor(0x00ff0000);
@@ -480,25 +431,24 @@ public class FraPublish extends BaseFragment {
 		// // 设置颜料笔点击监听
 		// CasualColorUtil casualColorUtil = new CasualColorUtil(this, drawView);
 		// casualColorUtil.casualColorPicSetOnClickListener();
-		//
-		// 文字
-//		GeometryUtil graphicUtil = new GeometryUtil(activity, mView, drawView);
+		// // 文字
+//		GeometryUtil graphicUtil = new GeometryUtil(this,getWindow().getDecorView(), drawView,);
 //		graphicUtil.graphicPicSetOnClickListener();
 		// 涂鸦
-//		TuYaUtil tuYaUtil = new TuYaUtil(activity, mView, drawView);
-//		tuYaUtil.tuyaPicSetOnClickListener();
+		TuYaUtil tuYaUtil = new TuYaUtil(this,getWindow().getDecorView(), drawView);
+		tuYaUtil.tuyaPicSetOnClickListener();
 		// // 设置印花点击的监听
 		// StamppenUtil stamppenUtil = new StamppenUtil(this, drawView);
 		// stamppenUtil.stampPenPicSetOnClickListener();
-		// 设置背景图片点击的监听
-//		BackgroundUtil backgroundUtil = new BackgroundUtil(activity, mView, drawView);
-//		backgroundUtil.backgroundPicSetOnClickListener();
+		 // 设置背景图片点击的监听
+		 BackgroundUtil backgroundUtil = new BackgroundUtil(this,getWindow().getDecorView(), drawView);
+		 backgroundUtil.backgroundPicSetOnClickListener();
 		// // 设置橡皮点击的监听
 		// EraserUtil eraserUtil = new EraserUtil(this, drawView);
 		// eraserUtil.eraserPicSetOnClickListener();
 		// // 设置素材点击的监听
-//		StickerUtil stickerUtil = new StickerUtil(activity, mView, drawView);
-//		stickerUtil.stickerPicSetOnClickListener();
+		 StickerUtil stickerUtil = new StickerUtil(this,getWindow().getDecorView(), drawView);
+		 stickerUtil.stickerPicSetOnClickListener();
 		// // 设置图片点击的监听
 		// PicUtil picUtil = new PicUtil(this);
 		// picUtil.picPicSetOnClickListener();
@@ -517,10 +467,10 @@ public class FraPublish extends BaseFragment {
 		saveButton.setOnClickListener(new Button.OnClickListener() {
 			public void onClick(View v) {
 				DetailImages detailImages = drawView.saveBitmap();
-				Intent intent = new Intent(getActivity(), ActPublish.class);
+				Intent intent = new Intent();
 				intent.putExtra(Constant.DATA, detailImages);
-				startActivityForResult(intent, PUBLISH_SHOW_RESULT);
-				drawView.freeBitmaps();
+				setResult(Activity.RESULT_OK, intent);
+				finish();
 			}
 		});
 		// 点击undo按钮
@@ -542,21 +492,7 @@ public class FraPublish extends BaseFragment {
 			}
 		});
 	}
-
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		if (null == mView) {
-			return super.onCreateView(inflater, container, savedInstanceState);
-		}
-		return mView;
-	}
-
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		super.onActivityCreated(savedInstanceState);
-	}
-
 	public void setUpAndButtomBarVisible(boolean isVisible) {
 		if (isVisible) {
 			rightBar.setVisibility(View.VISIBLE);
@@ -570,9 +506,9 @@ public class FraPublish extends BaseFragment {
 	private ArrayList<SLBitmap> viewPhoto() {
 		String[] projection = new String[] { MediaStore.Images.ImageColumns._ID, Thumbnails.DATA,
 				MediaStore.Images.ImageColumns.DATE_TAKEN };
-		Cursor cursor = activity.managedQuery(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-				projection, null, null, MediaStore.Images.ImageColumns.DATE_TAKEN + " DESC");
-		ContentResolver cr = activity.getContentResolver();
+		Cursor cursor = managedQuery(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection,
+				null, null, MediaStore.Images.ImageColumns.DATE_TAKEN + " DESC");
+		ContentResolver cr = this.getContentResolver();
 		if (cursor == null) {
 			return null;
 		}
@@ -597,56 +533,34 @@ public class FraPublish extends BaseFragment {
 		Bitmap bitmap;
 		String path;
 		boolean isCheck = true;
-
-		SLBitmap() {
-
+		SLBitmap(){
+			
 		}
 	}
+	
 
 	@Override
-	public void onDestroy() {
+	protected void onDestroy() {
 		super.onDestroy();
-		unbindDrawables(mView.findViewById(R.id.drawroot));
+		unbindDrawables(findViewById(R.id.drawroot));
 		drawView.freeBitmaps();
 		System.gc();
 	}
 
 	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		// PIC_STORAGE_BG=1 PIC_STORAGE_STICKER=2 PIC_CAMERA_BG=3
 		// PIC_CAMERA_STICKER=4
-
-		if (requestCode == PUBLISH_SHOW_RESULT) {
-			drawView.initView();
-		}
-		//滤镜
-		if(requestCode == PUBLISH_SHOW_DRAWLVJING_RESULT){
-			
-			return;
-		}else 
-			//图案
-			if (requestCode== PUBLISH_SHOW_DRAWTUAN_RESULT) {
-				return;
-		}else 
-			//涂鸦
-			if (requestCode== PUBLISH_SHOW_DRAWTUYA_RESULT) {
-				return;
-		}else 
-			//文字
-			if (requestCode== PUBLISH_SHOW_DRAWWORD_RESULT) {
-				return;
-		}
-		if ((requestCode >= 1 && requestCode <= 4) && resultCode == Activity.RESULT_OK
-				&& null != data) {
+		if ((requestCode >= 1 && requestCode <= 4) && resultCode == RESULT_OK && null != data) {
 			Uri selectedImage = data.getData();
 			Bitmap bitmap = null;
 			AssetFileDescriptor fileDescriptor = null;
 			BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inJustDecodeBounds = true;
 			try {
-				fileDescriptor = activity.getContentResolver().openAssetFileDescriptor(
-						selectedImage, "r");
+				fileDescriptor = this.getContentResolver().openAssetFileDescriptor(selectedImage,
+						"r");
 			} catch (FileNotFoundException e) {
 			}
 			bitmap = BitmapFactory.decodeFileDescriptor(fileDescriptor.getFileDescriptor(), null,
@@ -678,13 +592,13 @@ public class FraPublish extends BaseFragment {
 		drawView.setBasicGeometry(null);
 	}
 
-	// @Override
-	// public void onBackPressed() {
-	// // Intent intent = new Intent();
-	// // intent.setClass(ActDraw.this, MainActivity.class);
-	// // startActivity(intent);
-	// ActDraw.this.finish();
-	// }
+	@Override
+	public void onBackPressed() {
+		// Intent intent = new Intent();
+		// intent.setClass(ActDraw.this, MainActivity.class);
+		// startActivity(intent);
+		ActDraw.this.finish();
+	}
 
 	private void unbindDrawables(View view) {
 		if (view.getBackground() != null) {
@@ -697,7 +611,4 @@ public class FraPublish extends BaseFragment {
 			((ViewGroup) view).removeAllViews();
 		}
 	}
-	
-	
-
 }

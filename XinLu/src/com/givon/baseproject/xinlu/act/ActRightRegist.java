@@ -42,6 +42,7 @@ import com.givon.baseproject.xinlu.util.StringUtil;
 import com.givon.baseproject.xinlu.util.ToastUtils;
 import com.givon.baseproject.xinlu.util.XLHttpUrl;
 import com.givon.baseproject.xinlu.view.RoundImageView;
+import com.lidroid.xutils.BitmapUtils;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.lidroid.xutils.view.annotation.event.OnClick;
@@ -153,19 +154,19 @@ public class ActRightRegist extends BaseActivity {
 	private void registAction(String memberName, String password, String nickName, String sex,
 			String headImage) {
 		HttpClientAsync httpClientAsync = HttpClientAsync.getInstance();
-		HttpParams params = new HttpParams();
-		params.put("memberName", "18780118236");
-		params.put("password", "123456");
-		params.put("nickName", "Hello");
-		params.put("sex", "男");
-		params.put("headImage", "/test/upload/1413943835514.jpg");
+//		HttpParams params = new HttpParams();
+//		params.put("memberName", "18780118236");
+//		params.put("password", "123456");
+//		params.put("nickName", "Hello");
+//		params.put("sex", "男");
+//		params.put("headImage", "/test/upload/1413943835514.jpg");
 
 		JSONObject object = new JSONObject();
-		object.put("memberName", "18780118236");
+		object.put("memberName", mPhone);
 		object.put("password", "123456");
 		object.put("nickName", "Hello");
 		object.put("sex", "男");
-		object.put("headImage", "/test/upload/1413943835514.jpg");
+		object.put("headImage", avtaString);
 		String dataString = JSON.toJSONString(object);
 		System.out.println(dataString);
 		httpClientAsync.post(XLHttpUrl.getUrl(XLHttpUrl.Register), dataString,
@@ -287,6 +288,8 @@ public class ActRightRegist extends BaseActivity {
 			if (result != null) {
 				avtaString = result;
 				Toast.makeText(getApplicationContext(), "成功", Toast.LENGTH_LONG).show();
+//				BitmapUtils bitmapUtils = new BitmapUtils(ActRightRegist.this);
+//				bitmapUtils.display(avtaString, displayConfig);
 			} else {
 				Toast.makeText(getApplicationContext(), "失败", Toast.LENGTH_LONG).show();
 			}

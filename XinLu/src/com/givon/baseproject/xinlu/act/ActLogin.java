@@ -127,7 +127,7 @@ public class ActLogin extends BaseActivity implements Callback {
 					ToastUtils.showMessage(message);
 				}
 			}
-		}, MemberEntity.class);
+		}, MemberEntity.class,true);
 //		HttpUtils httpUtils = new HttpUtils();
 //		httpUtils.send(HttpMethod.GET, XLHttpUrl.getUrl(XLHttpUrl.Login),
 //				new RequestCallBack<String>() {

@@ -28,6 +28,36 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="饱和度"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"/>
+        <com.givon.util.colorpicker.SaturationBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="饱和度"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"/>
+        <com.givon.util.colorpicker.ValueBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
             android:layout_height="wrap_content"
             android:text="透明度"
             android:layout_width="wrap_content"

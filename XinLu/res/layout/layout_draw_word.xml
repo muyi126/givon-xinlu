@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawroot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <include layout="@layout/layout_draw_titlbar" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <com.givon.baseproject.xinlu.view.DrawView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/drawview"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent" >
+        </com.givon.baseproject.xinlu.view.DrawView>
+
+        <LinearLayout
+            android:id="@+id/drawbottom"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical" >
+
+            <FrameLayout
+                android:id="@+id/fl_botton_tool"
+                android:layout_width="fill_parent"
+                android:layout_height="80dip"
+                android:background="@drawable/drawbottombar" >
+
+                <LinearLayout
+                    android:id="@+id/ly_texttype"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal" >
+
+                    <TextView
+                        android:layout_width="50dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="字体" />
+
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:scrollbars="none" >
+
+                        <LinearLayout
+                            android:id="@+id/graphiclist"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal" >
+
+                            <TextView
+                                android:id="@+id/text_type_1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="30dp"
+                                android:layout_marginBottom="5dp"
+                                android:layout_marginTop="5dp"
+                                android:padding="5dp"
+                                android:text="宋体" />
+
+                            <TextView
+                                android:id="@+id/text_type_2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="30dp"
+                                android:layout_marginBottom="5dp"
+                                android:layout_marginTop="5dp"
+                                android:padding="5dp"
+                                android:text="宋体" />
+
+                            <TextView
+                                android:id="@+id/text_type_3"
+                                android:layout_width="wrap_content"
+                                android:layout_height="30dp"
+                                android:layout_marginBottom="5dp"
+                                android:layout_marginTop="5dp"
+                                android:padding="5dp"
+                                android:text="宋体" />
+
+                            <TextView
+                                android:id="@+id/text_type_4"
+                                android:layout_width="wrap_content"
+                                android:layout_height="30dp"
+                                android:layout_marginBottom="5dp"
+                                android:layout_marginTop="5dp"
+                                android:padding="5dp"
+                                android:text="宋体" />
+                        </LinearLayout>
+                    </HorizontalScrollView>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ly_textcolor"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:layout_gravity="center"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:layout_width="50dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="颜色" />
+                    <!--
+                    <Button
+                        android:id="@+id/graphiccolorbtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:text="choose" >
+                    </Button>
+                    -->
+
+                    <com.givon.util.colorpicker.ColorPickerView
+                        android:id="@+id/graphiccolorview"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dip" />
+                </LinearLayout>
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dip"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/tv_texttype"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dip"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="字体" >
+                </TextView>
+
+                <TextView
+                    android:id="@+id/tv_textcolor"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dip"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="颜色" >
+                </TextView>
+
+                <TextView
+                    android:id="@+id/tv_bianji"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dip"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="编辑" >
+                </TextView>
+            </LinearLayout>
+
+            
+        </LinearLayout>
+    </RelativeLayout>
+
+</LinearLayout>

@@ -5,7 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="8"
+        android:minSdkVersion="11"
         android:targetSdkVersion="19" />
 
     <supports-screens
@@ -25,6 +25,7 @@
     <!-- 统计SDK用的 -->
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS_FULL" />
 
     <application
         android:name="com.givon.baseproject.xinlu.BaseApplication"
@@ -48,6 +49,10 @@
         </activity>
         <activity
             android:name="com.givon.baseproject.xinlu.act.ActPublish"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.givon.baseproject.xinlu.act.ActDraw"
             android:screenOrientation="portrait" >
         </activity>
         <activity
@@ -75,7 +80,7 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="com.givon.baseproject.xinlu.act.TestDrawActivity"
+            android:name="com.givon.baseproject.xinlu.act.ActDrawWord"
             android:screenOrientation="portrait" >
         </activity>
         <activity

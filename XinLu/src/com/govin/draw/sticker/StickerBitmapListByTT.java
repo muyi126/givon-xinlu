@@ -16,10 +16,9 @@ public class StickerBitmapListByTT {
 
 	private StickerToolsByTT stickerTools;
 	private boolean isStickerToolsDraw;
-	private boolean isFocusToolsDraw;
 	private final int TOOLSTOTALDRAWTIME = 75;
 	private int stickerToolsDrawTime;
-
+	private boolean isTouchEditText = false;
 	private DrawView container;
 
 	public StickerBitmapListByTT(DrawView container) {
@@ -30,7 +29,6 @@ public class StickerBitmapListByTT {
 		stickerTools = new StickerToolsByTT(container, this);
 		this.container = container;
 		isStickerToolsDraw = false;
-		isFocusToolsDraw = false;
 		stickerToolsDrawTime = 0;
 	}
 
@@ -38,6 +36,7 @@ public class StickerBitmapListByTT {
 	public boolean addStickerBitmap(TextViewStickerBitmap stickerBitmap) {
 		if (capacity > size) {
 			stickerBitmaps[size++] = stickerBitmap;
+			onTouchStickerBitmapIndex = size - 1;
 			return true;
 		}
 		return false;
@@ -56,21 +55,15 @@ public class StickerBitmapListByTT {
 		}
 		stickerBitmaps[size - 1] = onTouchStickerBitmap;
 	}
-	
-	public void editonTouchTextView(Paint paint,String content){
-		if(null!=stickerBitmaps&&stickerBitmaps.length>onTouchStickerBitmapIndex&&onTouchStickerBitmapIndex>=0){
-			stickerBitmaps[onTouchStickerBitmapIndex].setEditView(paint, content);
-		}
-	}
 
 	// 水平翻转
-//	public void mirrorStickerBitmap() {
-//		stickerBitmaps[onTouchStickerBitmapIndex].mirrorTheBitmap();
-//	}
+	public void mirrorStickerBitmap() {
+		stickerBitmaps[onTouchStickerBitmapIndex].mirrorTheBitmap();
+	}
 
 	// 将贴图绘制在画布上
 	public void drawOnTouchStickerBitmapInCanvas() {
-		stickerBitmaps[onTouchStickerBitmapIndex].drawGraphic(container.getPaintCanvas());
+		stickerBitmaps[onTouchStickerBitmapIndex].drawBitmap(container.getPaintCanvas());
 		deleteOnTouchStickerBitmap();
 	}
 
@@ -80,14 +73,14 @@ public class StickerBitmapListByTT {
 			stickerBitmaps[i] = stickerBitmaps[i + 1];
 		}
 		size--;
+		onTouchStickerBitmapIndex = size + 1;
 		isStickerToolsDraw = false;
-		isFocusToolsDraw = false;
 	}
 
 	// 绘制所有贴图和工具
 	public void drawStickerBitmapList(Canvas canvas) {
 		for (int i = 0; i < size; i++) {
-			stickerBitmaps[i].drawGraphic(canvas);
+			stickerBitmaps[i].drawBitmap(canvas);
 		}
 		if (isStickerToolsDraw) {
 			stickerTools.drawTools(canvas, stickerBitmaps[onTouchStickerBitmapIndex].isLock());
@@ -95,31 +88,29 @@ public class StickerBitmapListByTT {
 			if (stickerToolsDrawTime >= TOOLSTOTALDRAWTIME) {
 				stickerToolsDrawTime = 0;
 				isStickerToolsDraw = false;
-				isFocusToolsDraw = true;
 			}
-		}
-		if (isFocusToolsDraw) {
-			stickerTools.drawFocusTools(canvas);
 		}
 	}
 
 	// 设置是否绘制工具
-	public void setIsStickerToolsDraw(boolean isStickerToolsDraw, PointF leftTopPoint,
-			PointF frocePoint) {
+	public void setIsStickerToolsDraw(boolean isStickerToolsDraw, PointF leftTopPoint) {
 		this.isStickerToolsDraw = isStickerToolsDraw;
-
 		if (isStickerToolsDraw) {
-			stickerTools.setStartLeftTop(leftTopPoint, frocePoint);
+			stickerTools.setStartLeftTop(leftTopPoint);
 			stickerToolsDrawTime = 0;
 		}
 	}
-	
-	public void setFocusPoint(PointF frocePoint){
-		stickerTools.setFocusPoint(frocePoint);
+
+
+	public boolean isTouchEditText() {
+		return isTouchEditText;
 	}
 
-	public void setIsFocusToolsDraw(boolean isFocusToolsDraw) {
-		this.isFocusToolsDraw = isFocusToolsDraw;
+	public void setTouchEditText(boolean isTouchEditText) {
+		System.out.println("setTouchEditText"+isTouchEditText);
+		this.isTouchEditText = isTouchEditText;
+		container.setEditTextVisible(isTouchEditText);
+
 	}
 
 	// 监听onTouch事件
@@ -133,7 +124,7 @@ public class StickerBitmapListByTT {
 			return 3;
 		}
 		for (int i = size - 1; i >= 0; i--) {
-			if (stickerBitmaps[i].isPointInsideGeometry(x, y)) {
+			if (stickerBitmaps[i].isPointInsideBitmap(x, y)) {
 				onTouchStickerBitmapIndex = i;
 				return 2;
 			}
@@ -141,9 +132,26 @@ public class StickerBitmapListByTT {
 		return -1;
 	}
 
+	public boolean isStickerToolsDraw() {
+		return isStickerToolsDraw;
+	}
+
+	public void setStickerToolsDraw(boolean isStickerToolsDraw) {
+		this.isStickerToolsDraw = isStickerToolsDraw;
+	}
+
 	public void freeBitmaps() {
-		// for(int i = 0; i < size; i++) {
-		// stickerBitmaps[i].bitmap.recycle();
-		// }
+		for (int i = 0; i < size; i++) {
+			stickerBitmaps[i].bitmap.recycle();
+		}
+	}
+
+	public void editonTouchTextView(Paint paint, String content) {
+		stickerBitmaps[onTouchStickerBitmapIndex].setEditView(paint, content);
+	}
+
+	public void editonTouchPaint(Paint paint) {
+		stickerBitmaps[onTouchStickerBitmapIndex].setEditViewPaint(paint);
+
 	}
 }

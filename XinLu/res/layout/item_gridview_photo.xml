@@ -7,7 +7,7 @@
         android:id="@+id/iv_photo"
         android:layout_width="120dip"
         android:layout_height="120dip"
-        android:background="@drawable/smallpaper03"
+		android:layout_gravity="center"        
         />
 
 </LinearLayout>

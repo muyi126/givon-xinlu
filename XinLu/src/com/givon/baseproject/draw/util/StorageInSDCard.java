@@ -10,7 +10,8 @@ import android.graphics.Bitmap;
 import android.os.Environment;
 import android.widget.Toast;
 
-import com.givon.baseproject.xinlu.R;
+import com.givon.baseproject.xinlu.entity.DetailImages;
+import com.givon.baseproject.xinlu.util.FileCache;
 
 public class StorageInSDCard {
 	
@@ -34,20 +35,32 @@ public class StorageInSDCard {
 		return externalStorageAvailable && externalStorageWriteable;
 	}
 	
-	public static String saveBitmapInExternalStorage(Bitmap bitmap,Context context) {
+	public static DetailImages saveBitmapInExternalStorage(Bitmap bitmap,Context context) {
 		try {
 			if(IsExternalStorageAvailableAndWriteable()) {
 				File extStorage = new File(Environment.getExternalStorageDirectory().getPath() +"/drawpics");
 				if (!extStorage.exists()) {
 					extStorage.mkdirs();
 				}
-				File file = new File(extStorage,System.currentTimeMillis()+".png");
+				String nameString = FileCache.getInstance().bitmap2Md5(bitmap);
+				File file = new File(extStorage,nameString+".jpg");
+				if(file.exists()){
+					DetailImages detailImages = new DetailImages();
+					detailImages.setHeightSize(DrawAttribute.screenHeight);
+					detailImages.setWidthSize(DrawAttribute.screenWidth);
+					detailImages.setImageUrl(file.getPath());
+					return detailImages;
+				}
 				FileOutputStream fOut = new FileOutputStream(file);
-				bitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+				bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
 				fOut.flush();
 				fOut.close();
 				Toast.makeText(context,  "保存成功", Toast.LENGTH_SHORT).show();
-				return file.getPath();
+				DetailImages detailImages = new DetailImages();
+				detailImages.setHeightSize(DrawAttribute.screenHeight_out);
+				detailImages.setWidthSize(DrawAttribute.screenWidth_out);
+				detailImages.setImageUrl(file.getPath());
+				return detailImages;
 			}
 			else {
 				Toast.makeText(context,  "保存失败", Toast.LENGTH_SHORT).show();
@@ -56,7 +69,7 @@ public class StorageInSDCard {
 		catch (IOException ioe){
 			ioe.printStackTrace();
 		}
-		return "";
+		return null;
 	}
 	
 	public static ArrayList<String> getBitmapsPathFromExternalStorage() {
