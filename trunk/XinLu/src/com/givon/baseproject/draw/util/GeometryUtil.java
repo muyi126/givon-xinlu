@@ -6,41 +6,47 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.givon.baseproject.xinlu.R;
 import com.givon.baseproject.xinlu.util.ToastUtils;
 import com.givon.baseproject.xinlu.view.DrawView;
+import com.givon.util.colorpicker.ColorPickerView;
+import com.givon.util.colorpicker.ColorPickerView.OnColorChangedListener;
 
 public class GeometryUtil {
-	private enum TextType {
+	public enum TextType {
 		SONG, KAI
 	};
 
 	private View drawActivity;
 	private Activity activity;
 	private DrawView drawView;
-
+	private ColorPickerView mColorPickerView;
 	private TextView selectedGraphic;
 	private TextType textType;
-	private ImageView selectedColor;
-	private ColorPickerDialog colorPickerDialog;
 	private EditText mEditText;
+//	private LinearLayout mEditLayout;
 
 	public GeometryUtil(Activity activity,View view, DrawView drawView) {
 		this.drawActivity = view;
 		this.activity = activity;
 		this.drawView = drawView;
+//		this.mEditLayout = eLayout;
 		selectedGraphic = (TextView) view.findViewById(R.id.text_type_1);
 		textType = TextType.SONG;
 		selectedGraphic.setBackgroundColor(DrawAttribute.backgroundOnClickColor);
-		selectedColor = (ImageView) view.findViewById(R.id.graphiccolorview);
 		mEditText = (EditText) view.findViewById(R.id.et_content);
-		// sizeSeekBar = (SeekBar)drawActivity.findViewById(R.id.graphicsizeskb);
-		// strokeCheckBox = (CheckBox)drawActivity.findViewById(R.id.strokckb);
-		colorPickerDialog = new ColorPickerDialog(activity, selectedColor);
+		mColorPickerView = (ColorPickerView) view.findViewById(R.id.graphiccolorview);
+		mColorPickerView.setOnColorChangedListener(new OnColorChangedListener() {
+			
+			@Override
+			public void onColorChanged(int color) {
+				GeometryUtil.this.drawView.editStickerBitmapTT_Paint_now(GetTextPaintClass(textType));
+			}
+		});
+		
 	}
 
 	public void graphicPicSetOnClickListener() {
@@ -53,44 +59,41 @@ public class GeometryUtil {
 		for (int i = 0; i < graphics.length; i++) {
 			graphics[i].setOnClickListener(graphicOnTouchListener);
 		}
-		Button chooseColorButton = (Button) drawActivity.findViewById(R.id.graphiccolorbtn);
-		chooseColorButton.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				colorPickerDialog.getDialog().show();
-			}
-
-		});
-		Button startDrawingbutton = (Button) drawActivity.findViewById(R.id.graphicdrawbtn);
-		startDrawingbutton.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// drawView.setBasicGeometry(GetGraphicClass(graphicType));
-				// colorPickerDialog.getColor();
-				if(null!=mEditText.getText()&&mEditText.getText().toString().length()==0){
-					ToastUtils.showMessage("内容不能为空");
-					return;
-				}
-				drawView.addStickerBitmapTT(mEditText.getText().toString(),GetTextPaintClass(textType));
-			}
-
-		});
+//		Button chooseColorButton = (Button) drawActivity.findViewById(R.id.graphiccolorbtn);
+//		chooseColorButton.setOnClickListener(new OnClickListener() {
+//
+//			@Override
+//			public void onClick(View v) {
+//				colorPickerDialog.getDialog().show();
+//			}
+//
+//		});
+//		Button startDrawingbutton = (Button) drawActivity.findViewById(R.id.graphicdrawbtn);
+//		startDrawingbutton.setOnClickListener(new OnClickListener() {
+//
+//			@Override
+//			public void onClick(View v) {
+//				// drawView.setBasicGeometry(GetGraphicClass(graphicType));
+//				// colorPickerDialog.getColor();
+//				
+//
+//		});
 		
-		Button startDrawingbutton_now = (Button) drawActivity.findViewById(R.id.graphicdrawbtn_now);
-		startDrawingbutton_now.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				if(null!=mEditText.getText()&&mEditText.getText().toString().length()==0){
-					ToastUtils.showMessage("内容不能为空");
-					return;
-				}
-				drawView.editStickerBitmapTT_now(GetTextPaintClass(textType),mEditText.getText().toString());
-			}
-			
-		});
+//		Button cancelButton= (Button) drawActivity.findViewById(R.id.graphicdrawbtn_cancel);
+//		cancelButton.setOnClickListener(new OnClickListener() {
+//			
+//			@Override
+//			public void onClick(View v) {
+//				mEditLayout.setFocusable(false);
+//				mEditLayout.setVisibility(View.GONE);
+////				if(null!=mEditText.getText()&&mEditText.getText().toString().length()==0){
+////					ToastUtils.showMessage("内容不能为空");
+////					return;
+////				}
+////				drawView.editStickerBitmapTT_now(GetTextPaintClass(textType),mEditText.getText().toString());
+//			}
+//			
+//		});
 	}
 
 	class GraphicOnClickListener implements View.OnClickListener {
@@ -125,32 +128,9 @@ public class GeometryUtil {
 		}
 	}
 
-	private Paint GetTextPaintClass(TextType graphicType) {
+	public Paint GetTextPaintClass(TextType graphicType) {
 		Paint paint = new Paint();
-		paint.setColor(colorPickerDialog.getColor());
-//		paint.setStrokeWidth(sizeSeekBar.getProgress());
-//		if (strokeCheckBox.isChecked())
-//			paint.setStyle(Style.STROKE);
-//		if (graphicType == GraphicType.LINE)
-//			return new LineGeometry(paint);
-//		if (graphicType == GraphicType.OVAL)
-//			return new OvalGeometry(paint);
-//		if (graphicType == GraphicType.RECTANGLE)
-//			return new RectangleGeometry(paint);
-//		if (graphicType == GraphicType.ROUNDEDRECTANGLE)
-//			return new RoundedRectangleGeometry(paint);
-//		if (graphicType == GraphicType.TRIANGLE)
-//			return new TriangleGeometry(paint);
-//		if (graphicType == GraphicType.RIGHTTRIANGLE)
-//			return new RightTriangleGeometry(paint);
-//		if (graphicType == GraphicType.DIAMOND)
-//			return new DiamondGeometry(paint);
-//		if (graphicType == GraphicType.PENTAGON)
-//			return new PentagonGeometry(paint);
-//		if (graphicType == GraphicType.HEXAGON)
-//			return new HexagonGeometry(paint);
-//		if (graphicType == GraphicType.STAR)
-//			return new StarGeometry(paint);
+		paint.setColor(mColorPickerView.getColor());
 		return paint;
 	}
 }

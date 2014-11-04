@@ -21,6 +21,8 @@ public class DrawAttribute {
     public final static int backgroundOnClickColor = 0xfff08d1e;
 	public static int screenHeight;
 	public static int screenWidth;
+	public static int screenHeight_out = 1008;
+	public static int screenWidth_out = 600;
 	public static Paint paint = new Paint();
 		
 	public static Bitmap getImageFromAssetsFile(Context context,String fileName,boolean isBackground)

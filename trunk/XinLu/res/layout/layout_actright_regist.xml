@@ -34,7 +34,6 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dip"
         android:layout_marginRight="15dip"
-       	android:text="asdasds"
         android:paddingLeft="80dip"
         />
     <CheckBox 

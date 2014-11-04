@@ -119,6 +119,16 @@ public class StickerBitmapList {
 		return -1;
 	}
 	
+	
+	
+	public boolean isStickerToolsDraw() {
+		return isStickerToolsDraw;
+	}
+
+	public void setStickerToolsDraw(boolean isStickerToolsDraw) {
+		this.isStickerToolsDraw = isStickerToolsDraw;
+	}
+
 	public void freeBitmaps() {
 		for(int i = 0; i < size; i++) {
 			stickerBitmaps[i].bitmap.recycle();

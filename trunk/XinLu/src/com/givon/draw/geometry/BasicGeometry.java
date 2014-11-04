@@ -27,7 +27,7 @@ public abstract class BasicGeometry {
 
 	public BasicGeometry(Paint paint) {
 		width = 256;
-		height = 256;
+		height = 80;
 		geometryMatrix = new Matrix();
 		onDownMatrix = new Matrix();
 		onMoveMatrix = new Matrix();

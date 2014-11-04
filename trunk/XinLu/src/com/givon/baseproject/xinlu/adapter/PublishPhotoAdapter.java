@@ -10,7 +10,11 @@
 
 package com.givon.baseproject.xinlu.adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -18,14 +22,18 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.givon.baseproject.xinlu.BaseAdapter;
+import com.givon.baseproject.xinlu.BaseApplication;
 import com.givon.baseproject.xinlu.R;
+import com.givon.baseproject.xinlu.act.ActDraw;
+import com.givon.baseproject.xinlu.entity.DetailImages;
 import com.givon.baseproject.xinlu.util.ToastUtils;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
 
-public class PublishPhotoAdapter extends BaseAdapter<String> {
+public class PublishPhotoAdapter extends BaseAdapter<DetailImages> {
 	private final static int NOMEL = 0;
 	private final static int END = 1;
+	public final static int RESULT_CODE = 1112;
 
 	public PublishPhotoAdapter(Context ctx) {
 		super(ctx);
@@ -36,7 +44,7 @@ public class PublishPhotoAdapter extends BaseAdapter<String> {
 		if (null == mList || mList.size() == 0) {
 			return END;
 		} else {
-			if (position >= mList.size() - 1) {
+			if (position >= mList.size()) {
 				return END;
 			} else {
 				return NOMEL;
@@ -65,6 +73,7 @@ public class PublishPhotoAdapter extends BaseAdapter<String> {
 	@Override
 	public View getItemView(int position, View convertView, ViewGroup parent) {
 		int type;
+		
 		ViewHolder viewHolder = null;
 		type = getItemViewType(position);
 		if (null == convertView) {
@@ -92,6 +101,18 @@ public class PublishPhotoAdapter extends BaseAdapter<String> {
 		viewHolder = (ViewHolder) convertView.getTag();
 		switch (type) {
 		case NOMEL:
+			BitmapFactory.Options options = new BitmapFactory.Options();
+			options.inJustDecodeBounds = true;
+			Bitmap bmp = BitmapFactory.decodeFile(getItem(position).getImageUrl(), options);
+			float ox = BaseApplication.mWidth/3;
+			int height = options.outHeight * ((BaseApplication.mWidth/3)/ options.outWidth);
+			options.outWidth = (int) ox;
+			options.outHeight = height;
+			options.inJustDecodeBounds = false;
+			options.inSampleSize = (int) (options.outWidth / ox);
+			options.inPreferredConfig = Bitmap.Config.ARGB_4444;
+			bmp = BitmapFactory.decodeFile(getItem(position).getImageUrl(), options);
+			viewHolder.imageView.setImageBitmap(bmp);
 			viewHolder.imageView.setOnClickListener(new OnClickListener() {
 
 				@Override
@@ -105,7 +126,7 @@ public class PublishPhotoAdapter extends BaseAdapter<String> {
 
 				@Override
 				public void onClick(View v) {
-					ToastUtils.showMessage("ADD");
+					((Activity)mContext).startActivityForResult(new Intent(mContext,ActDraw.class), RESULT_CODE);
 				}
 			});
 			break;

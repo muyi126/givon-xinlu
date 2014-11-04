@@ -38,9 +38,18 @@
         <item name="android:textColor">@color/weibolist_bottombar_textcolor_selector</item>
         <item name="android:button">@null</item>
     </style>
-    
+
     <style name="MimaCheckboxTheme" parent="@android:style/Widget.CompoundButton.CheckBox">
         <item name="android:button">@drawable/btn_checkede</item>
+    </style>
+
+    <style name="selectorDialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item> <!-- 边框 -->
+        <item name="android:windowIsFloating">true</item> <!-- 是否浮现在activity之上 -->
+        <item name="android:windowIsTranslucent">false</item> <!-- 半透明 -->
+        <item name="android:windowNoTitle">true</item> <!-- 无标题 -->
+        <item name="android:windowBackground">@android:color/transparent</item> <!-- 背景透明 -->
+        <item name="android:backgroundDimAmount">0.6</item>
     </style>
 
 </resources>

@@ -1,6 +1,5 @@
 package com.givon.baseproject.xinlu.view;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -11,7 +10,6 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.drawable.BitmapDrawable;
-import android.support.v4.app.Fragment;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -20,10 +18,11 @@ import android.widget.Toast;
 
 import com.givon.baseproject.draw.util.DrawAttribute;
 import com.givon.baseproject.draw.util.StorageInSDCard;
+import com.givon.baseproject.xinlu.BaseActivity;
 import com.givon.baseproject.xinlu.R;
+import com.givon.baseproject.xinlu.entity.DetailImages;
 import com.givon.baseproject.xinlu.fragment.FraPublish;
 import com.givon.draw.geometry.BasicGeometry;
-import com.givon.draw.undoandredo.UndoAndRedo;
 import com.govin.draw.sticker.StickerBitmap;
 import com.govin.draw.sticker.StickerBitmapList;
 import com.govin.draw.sticker.StickerBitmapListByTT;
@@ -31,7 +30,8 @@ import com.govin.draw.sticker.TextViewStickerBitmap;
 
 public class DrawView extends View implements Runnable {
 	private final int VISIBLE_BTN_WIDTH = 60;
-	private final int VISIBLE_BTN_HEIGHT = 40;
+	private final int VISIBLE_TITLE_HEIGHT = 60;
+	private final int VISIBLE_BTN_HEIGHT = 70;
 
 	private enum TouchLayer {
 		GEOMETRY_LAYER, PAINT_LAYER, STICKER_BITMAP, STICKER_TEXT, STICKER_TOOL, STICKER_TEXT_TOOL, VISIBLE_BTN, NULL
@@ -44,12 +44,12 @@ public class DrawView extends View implements Runnable {
 	private BasicGeometry basicGeometry = null;
 	private StickerBitmapList stickerBitmapList = null;
 	private StickerBitmapListByTT stickerBitmapListByTT = null;
-	private Bitmap visibleBtnBitmap = null;
+	// private Bitmap visibleBtnBitmap = null;
 	private GestureDetector brushGestureDetector = null;
 	private BrushGestureListener brushGestureListener = null;
 	private DrawAttribute.DrawStatus drawStatus;
 	private TouchLayer touchLayer;
-	private UndoAndRedo undoAndRedo;
+	// private UndoAndRedo undoAndRedo;
 	private Context context;
 	private boolean isCanDraw = false;
 	private FraPublish fraPublish;
@@ -57,6 +57,11 @@ public class DrawView extends View implements Runnable {
 	public DrawView(Context context, AttributeSet attributeSet) {
 		super(context, attributeSet);
 		this.context = context;
+		initView();
+		new Thread(this).start();
+	}
+
+	public void initView() {
 		backgroundBitmap = DrawAttribute.getImageFromAssetsFile(context, "bigpaper00.jpg", true);
 		backgroundBitmapLeftTopP = new PointF(0, 0);
 		paintBitmap = Bitmap.createBitmap(DrawAttribute.screenWidth, DrawAttribute.screenHeight,
@@ -66,28 +71,21 @@ public class DrawView extends View implements Runnable {
 		stickerBitmapList = new StickerBitmapList(this);
 		stickerBitmapListByTT = new StickerBitmapListByTT(this);
 		this.drawStatus = DrawAttribute.DrawStatus.CASUAL_WATER;
-		undoAndRedo = new UndoAndRedo();
-		visibleBtnBitmap = ((BitmapDrawable) getResources().getDrawable(R.drawable.drawvisiblebtn))
-				.getBitmap();
+		// undoAndRedo = new UndoAndRedo();
+		// visibleBtnBitmap = ((BitmapDrawable) getResources().getDrawable(R.drawable.drawvisiblebtn))
+		// .getBitmap();
 		brushGestureListener = new BrushGestureListener(
 				casualStroke(R.drawable.marker, Color.BLACK), 2, null);
 		brushGestureDetector = new GestureDetector(brushGestureListener);
-		new Thread(this).start();
 	}
 
-	
-	
 	public FraPublish getFraPublish() {
 		return fraPublish;
 	}
 
-
-
 	public void setFraPublish(FraPublish fraPublish) {
 		this.fraPublish = fraPublish;
 	}
-
-
 
 	@Override
 	protected void onDraw(Canvas canvas) {
@@ -101,7 +99,7 @@ public class DrawView extends View implements Runnable {
 		}
 		stickerBitmapList.drawStickerBitmapList(canvas);
 		stickerBitmapListByTT.drawStickerBitmapList(canvas);
-		canvas.drawBitmap(visibleBtnBitmap, DrawAttribute.screenWidth - VISIBLE_BTN_WIDTH, 0, null);
+		// canvas.drawBitmap(visibleBtnBitmap, DrawAttribute.screenWidth - VISIBLE_BTN_WIDTH, 0, null);
 	}
 
 	@Override
@@ -112,10 +110,18 @@ public class DrawView extends View implements Runnable {
 			// 判断是否点击了隐形按钮
 			if (isClickOnVisibleBtn(x, y)) {
 				touchLayer = TouchLayer.VISIBLE_BTN;
-				fraPublish.setUpAndButtomBarVisible(true);
+				if (null != fraPublish) {
+					fraPublish.setUpAndButtomBarVisible(true);
+				} else {
+					((BaseActivity) context).setUpAndButtomBarVisible(true);
+				}
 				return true;
 			} else {
-				fraPublish.setUpAndButtomBarVisible(false);
+				if (null != fraPublish) {
+					fraPublish.setUpAndButtomBarVisible(false);
+				} else {
+					((BaseActivity) context).setUpAndButtomBarVisible(false);
+				}
 			}
 			int touchType = stickerBitmapList.getOnTouchType(x, y);
 			if (touchType == -1) {
@@ -133,6 +139,11 @@ public class DrawView extends View implements Runnable {
 				return true;// 点击了Text贴图的工具
 			case 2:
 				touchLayer = TouchLayer.STICKER_TEXT;
+				if(stickerBitmapListByTT.isTouchEditText()){
+					System.out.println("EEEEEE");
+					setEditTextVisible(true);
+				}
+				
 				break;// 点击了Text贴图
 			case -1:
 				if (basicGeometry != null
@@ -145,12 +156,15 @@ public class DrawView extends View implements Runnable {
 				}
 			}
 		}
+		if(touchLayer != TouchLayer.STICKER_TEXT){
+			setEditTextVisible(false);
+		}
 		// 绘图层的监听
 		if (touchLayer == TouchLayer.PAINT_LAYER) {
 			if (isCanDraw) {
 				brushGestureDetector.onTouchEvent(event);
 				if (event.getAction() == MotionEvent.ACTION_UP) {
-					undoAndRedo.addBitmap(paintBitmap);
+					// undoAndRedo.addBitmap(paintBitmap);
 				}
 			}
 		}
@@ -167,9 +181,27 @@ public class DrawView extends View implements Runnable {
 		return true;
 	}
 
+	public void setEditTextVisibleStucker(boolean isVisible){
+		stickerBitmapListByTT.setTouchEditText(isVisible);
+	}
+	
+	public void setEditTextVisible(boolean isVisible){
+		if (null != fraPublish) {
+		} else {
+			((BaseActivity) context).setEditViewVisible(isVisible);
+		}
+	}
+	// private boolean isClickOnVisibleBtn(float x, float y) {
+	// if (x > DrawAttribute.screenWidth - VISIBLE_BTN_WIDTH && x < DrawAttribute.screenWidth
+	// && y < VISIBLE_BTN_HEIGHT) {
+	// return true;
+	// }
+	// return false;
+	// }
 	private boolean isClickOnVisibleBtn(float x, float y) {
-		if (x > DrawAttribute.screenWidth - VISIBLE_BTN_WIDTH && x < DrawAttribute.screenWidth
-				&& y < VISIBLE_BTN_HEIGHT) {
+		System.out.println("x:" + x + " y:" + y + "  "
+				+ (DrawAttribute.screenHeight - VISIBLE_BTN_HEIGHT));
+		if (y + VISIBLE_TITLE_HEIGHT > DrawAttribute.screenHeight - VISIBLE_BTN_HEIGHT) {
 			return true;
 		}
 		return false;
@@ -213,19 +245,19 @@ public class DrawView extends View implements Runnable {
 	}
 
 	public void recordPaintBitmap(Bitmap bitmap) {
-		undoAndRedo.addBitmap(bitmap);
+		// undoAndRedo.addBitmap(bitmap);
 	}
 
 	public void undo() {
-		if (!undoAndRedo.currentIsFirst()) {
-			undoAndRedo.undo(paintBitmap);
-		}
+		// if (!undoAndRedo.currentIsFirst()) {
+		// undoAndRedo.undo(paintBitmap);
+		// }
 	}
 
 	public void redo() {
-		if (!undoAndRedo.currentIsLast()) {
-			undoAndRedo.redo(paintBitmap);
-		}
+		// if (!undoAndRedo.currentIsLast()) {
+		// undoAndRedo.redo(paintBitmap);
+		// }
 	}
 
 	public void setBasicGeometry(BasicGeometry geometry) {
@@ -251,9 +283,9 @@ public class DrawView extends View implements Runnable {
 
 	public void addStickerBitmapTT(String content, Paint paint) {
 		// 增加贴图s
-		stickerBitmapListByTT.setIsStickerToolsDraw(false, null, null);
+		stickerBitmapListByTT.setIsStickerToolsDraw(false, null);
 		if (!stickerBitmapListByTT.addStickerBitmap(new TextViewStickerBitmap(this,
-				stickerBitmapListByTT, paint, content))) {
+				stickerBitmapListByTT,paint, content))) {
 			// (new StickerBitmap(this, stickerBitmapList, bitmap))) {
 			Toast.makeText(context, "贴图太多了！", Toast.LENGTH_SHORT).show();
 		}
@@ -261,6 +293,11 @@ public class DrawView extends View implements Runnable {
 
 	public void editStickerBitmapTT_now(Paint paint, String content) {
 		stickerBitmapListByTT.editonTouchTextView(paint, content);
+		// 编辑当前文字
+	}
+
+	public void editStickerBitmapTT_Paint_now(Paint paint) {
+		stickerBitmapListByTT.editonTouchPaint(paint);
 		// 编辑当前文字
 	}
 
@@ -449,7 +486,6 @@ public class DrawView extends View implements Runnable {
 		public void setStampBrush(Bitmap[] brushBitmaps) {
 			this.stampBrushBitmaps = brushBitmaps;
 			halfBrushBitmapWidth = brushBitmaps[0].getWidth() / 2;
-			System.out.println("setStampBrush");
 		}
 
 		private void paintSingleStamp(float x, float y) {
@@ -465,9 +501,21 @@ public class DrawView extends View implements Runnable {
 		}
 	}
 
-	public String saveBitmap() {
-		Bitmap bitmap = Bitmap.createBitmap(DrawAttribute.screenWidth, DrawAttribute.screenHeight,
-				Bitmap.Config.ARGB_8888);
+	public DetailImages saveBitmap() {
+		return saveBitmap(false);
+	}
+
+	public DetailImages saveBitmap(boolean isOutShare) {
+		Bitmap bitmap;
+		if (isOutShare) {
+			bitmap = Bitmap.createBitmap(DrawAttribute.screenWidth_out,
+					DrawAttribute.screenHeight_out, Bitmap.Config.ARGB_8888);
+		} else {
+			bitmap = Bitmap.createBitmap(DrawAttribute.screenWidth, DrawAttribute.screenHeight,
+					Bitmap.Config.ARGB_8888);
+
+		}
+
 		Canvas canvas = new Canvas(bitmap);
 		canvas.drawColor(Color.WHITE);
 		canvas.drawBitmap(backgroundBitmap, backgroundBitmapLeftTopP.x, backgroundBitmapLeftTopP.y,
@@ -476,6 +524,8 @@ public class DrawView extends View implements Runnable {
 		if (basicGeometry != null) {
 			basicGeometry.drawGraphic(canvas);
 		}
+		stickerBitmapList.setStickerToolsDraw(false);
+		stickerBitmapListByTT.setStickerToolsDraw(false);
 		stickerBitmapList.drawStickerBitmapList(canvas);
 		stickerBitmapListByTT.drawStickerBitmapList(canvas);
 		return StorageInSDCard.saveBitmapInExternalStorage(bitmap, context);
@@ -486,6 +536,6 @@ public class DrawView extends View implements Runnable {
 		paintBitmap.recycle();
 		stickerBitmapList.freeBitmaps();
 		stickerBitmapListByTT.freeBitmaps();
-		undoAndRedo.freeBitmaps();
+		// undoAndRedo.freeBitmaps();
 	}
 }
