@@ -62,9 +62,8 @@ public class MyViewPager extends ViewPager {
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent arg0) {
-//		if(!FraHome.isHit){
-//			return false;
-//		}
+		System.out.println("onTouchEvent_ViewPAger");
+		
 		return super.onTouchEvent(arg0);
 	}
 	// 滑动距离及坐标
@@ -85,9 +84,11 @@ public class MyViewPager extends ViewPager {
 			yDistance += Math.abs(curY - yLast);
 			xLast = curX;
 			yLast = curY;
-			if (xDistance > yDistance) {
+			System.out.println("Distanc:"+(xDistance-yDistance));
+			if (xDistance - yDistance>1) {
 				return true;
 			}
+				
 		}
 		if(FraHome.isHit){
 			return super.onInterceptTouchEvent(ev);

@@ -55,6 +55,9 @@ public abstract class BaseListActivity<T> extends BaseActivity {
 		if (null != addHeaderViewCallBack) {
 			addHeaderViewCallBack.addHeaderView();
 		}
+		if (null != addFootViewCallBack) {
+			addFootViewCallBack.addFootView();
+		}
 		mListView.setAdapter(mAdapter);
 	}
 
@@ -123,8 +126,18 @@ public abstract class BaseListActivity<T> extends BaseActivity {
 	public interface AddHeaderViewCallBack {
 		public void addHeaderView();
 	}
+	public interface AddFootViewCallBack {
+		public void addFootView();
+	}
 
 	public AddHeaderViewCallBack addHeaderViewCallBack;
+	public AddFootViewCallBack addFootViewCallBack;
+
+	
+
+	public void setAddFootViewCallBack(AddFootViewCallBack addFootViewCallBack) {
+		this.addFootViewCallBack = addFootViewCallBack;
+	}
 
 	protected void setHeaderView(AddHeaderViewCallBack addHeaderViewCallBack) {
 		this.addHeaderViewCallBack = addHeaderViewCallBack;

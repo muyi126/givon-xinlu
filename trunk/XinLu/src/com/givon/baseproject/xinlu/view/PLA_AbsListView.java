@@ -1469,7 +1469,7 @@ public abstract class PLA_AbsListView extends PLA_AdapterView<ListAdapter> imple
 //						 point where they hit the limit first.
 						int motionPosition = findMotionRow(y);
 						if (motionPosition >= 0) {
-							System.out.println("卧槽");
+							System.out.println("卧槽："+motionPosition);
 							final View motionView = getChildAt(motionPosition - mFirstPosition);
 							mMotionViewOriginalTop = motionView.getTop();
 						}

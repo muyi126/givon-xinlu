@@ -43,5 +43,6 @@
 	<string name="refresh_release_text">松开可刷新</string>
 	<string name="toast_text">ScrollView下拉刷新完毕</string>
     <string name="ptr_refreshing">Refreshing</string> 
+    
 
 </resources>

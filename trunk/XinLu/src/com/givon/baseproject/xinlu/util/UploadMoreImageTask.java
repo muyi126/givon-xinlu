@@ -30,8 +30,9 @@ import com.upyun.api.Uploader;
 import com.upyun.api.utils.UpYunException;
 import com.upyun.api.utils.UpYunUtils;
 
-public class UploadMoreImageTask extends AsyncTask<ArrayList<DetailImages>, Void, ArrayList<DetailImages>> {
+public class UploadMoreImageTask extends AsyncTask<Object, Void, ArrayList<DetailImages>> {
 	int total;
+	private int type;
 	ArrayList<String> error = new ArrayList<String>();
 	private UpLoadListener upLoadListener;
 	private static final String TEST_API_IMAGE_KEY = "lVBfg35QWT+r/LMFsoJjiQ5deno="; // 测试使用的表单api验证密钥
@@ -39,6 +40,8 @@ public class UploadMoreImageTask extends AsyncTask<ArrayList<DetailImages>, Void
 	private static final String FILE_BUCKET_NAME = "zuji-app-file"; // 存储空间
 	private static final String PIC_BUCKET_NAME = "tiangou-app-img"; // 存储空间
 	private static final long EXPIRATION = System.currentTimeMillis() / 1000 + 600; // 过期时间，必须大于当前时间
+	public static final int UPLOAD_FILE = 1;
+	public static final int UPLOAD_IMAGE = 2;
 
 	public UpLoadListener getUpLoadListener() {
 		return upLoadListener;
@@ -49,24 +52,30 @@ public class UploadMoreImageTask extends AsyncTask<ArrayList<DetailImages>, Void
 	}
 
 	@Override
-	protected ArrayList<DetailImages> doInBackground(ArrayList<DetailImages>... params) {
+	protected ArrayList<DetailImages> doInBackground(Object... params) {
+		ArrayList<DetailImages> data = (ArrayList<DetailImages>) params[0];
 		ArrayList<DetailImages> strings = new ArrayList<DetailImages>();
-		total = params[0].size();
+		total = data.size();
+		type = (Integer) params[1];
 		try {
 			for (int i = 0; i < total; i++) {
-				File file = new File(params[0].get(i).getImageUrl());
+				File file = new File(data.get(i).getImageUrl());
+				DetailImages detailImages = data.get(i);
+				DetailImages detailImages2  = new DetailImages();
+				detailImages2.setHeightSize(detailImages.getHeightSize());
+				detailImages2.setImageUrl(detailImages.getImageUrl());
+				detailImages2.setSequences(detailImages.getSequences());
+				detailImages2.setWidthSize(detailImages.getWidthSize());
 				if (file.exists()) {
-					String string = upLoad(params[0].get(i).getImageUrl());
+					String string = upLoad(detailImages.getImageUrl(),type);
 					if (!StringUtil.isEmpty(string)) {
-//						params[0].get(i).setImageUrl(string);
-						DetailImages detailImages  = params[0].get(i);
-						detailImages.setImageUrl(string);
-						strings.add(detailImages);
+						detailImages2.setImageUrl(string);
+						strings.add(detailImages2);
 					} else {
-						error.add(params[0].get(i).getImageUrl());
+						error.add(detailImages2.getImageUrl());
 					}
 				} else {
-					error.add(params[0].get(i).getImageUrl());
+					error.add(detailImages2.getImageUrl());
 				}
 			}
 		} catch (Exception e) {
@@ -113,8 +122,19 @@ public class UploadMoreImageTask extends AsyncTask<ArrayList<DetailImages>, Void
 		}
 	}
 
-	private String upLoad(String filePath) {
-
+	private String upLoad(String filePath,int type) {
+		String BUCKET= "";
+		switch (type) {
+		case  UPLOAD_FILE:
+			BUCKET = FILE_BUCKET_NAME;
+			break;
+		case  UPLOAD_IMAGE:
+			BUCKET = PIC_BUCKET_NAME;
+			break;
+		default:
+			BUCKET = PIC_BUCKET_NAME;
+			break;
+		}
 		String string = null;
 		// String filePath = params[0];
 		try {
@@ -125,17 +145,17 @@ public class UploadMoreImageTask extends AsyncTask<ArrayList<DetailImages>, Void
 			String nameString = FileCache.getFileMD5(new File(filePath));
 			String SAVE_KEY = File.separator + "footprint" + File.separator + "upload" + File.separator
 					+ nameString;
-			System.out.println("SAVE_KEY:" + SAVE_KEY);
-			System.out.println("SAVE_KEY:" + filePath);
+//			System.out.println("SAVE_KEY:" + SAVE_KEY);
+//			System.out.println("SAVE_KEY:" + filePath);
 			// 取得base64编码后的policy
-			String policy = UpYunUtils.makePolicy(SAVE_KEY, EXPIRATION, PIC_BUCKET_NAME);
+			String policy = UpYunUtils.makePolicy(SAVE_KEY, EXPIRATION, BUCKET);
 
 			// 根据表单api签名密钥对policy进行签名
 			// 通常我们建议这一步在用户自己的服务器上进行，并通过http请求取得签名后的结果。
 			String signature = UpYunUtils.signature(policy + "&" + TEST_API_IMAGE_KEY);
 
 			// 上传文件到对应的bucket中去。
-			string = Uploader.upload(policy, signature, PIC_BUCKET_NAME, filePath);
+			string = Uploader.upload(policy, signature, BUCKET, filePath);
 		} catch (UpYunException e) {
 			e.printStackTrace();
 		}

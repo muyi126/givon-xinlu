@@ -174,6 +174,10 @@ public class RefreshableView extends LinearLayout {
         }
     }
     
+    
+    public void doRefresh(){
+    	refresh();
+    }
 
     
     private void returnInitState() {

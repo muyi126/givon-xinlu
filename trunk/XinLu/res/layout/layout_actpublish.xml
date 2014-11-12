@@ -3,30 +3,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-<RelativeLayout 
-    android:layout_width="match_parent"
-    android:layout_height="50dip"
-    >
-    <Button 
-        android:id="@+id/bt_cancel"
-        android:layout_marginLeft="15dip"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="取消"
-        />
-    <Button 
-        android:id="@+id/bt_finish"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="15dip"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="完成"
-        />
-    
-</RelativeLayout>
-    <ScrollView
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="50dip" >
+
+        <Button
+            android:id="@+id/bt_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dip"
+            android:text="取消" />
+
+        <Button
+            android:id="@+id/bt_finish"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="15dip"
+            android:text="完成" />
+    </RelativeLayout>
+
+    <com.givon.baseproject.xinlu.view.PublishScrollView
+        android:id="@+id/sc_Scroll"
+        android:paddingLeft="15dip"
+        android:paddingRight="15dip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -51,7 +54,7 @@
                     android:layout_height="wrap_content" />
             </LinearLayout>
 
-            <GridView
+            <com.givon.baseproject.xinlu.view.PublishGridView
                 android:id="@+id/GridView_photo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -80,7 +83,97 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
             </LinearLayout>
+            <com.givon.baseproject.xinlu.view.RecordButton
+                android:id="@+id/bt_Listener"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="按住说话"
+                />
+            <RelativeLayout 
+                android:id="@+id/rl_bgMusic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+                <TextView 
+                    android:id="@+id/tv_bgMusic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:text="背景音乐"
+                    />
+                <TextView 
+                    android:id="@+id/tv_bgMusic_select"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:text="无"
+                    android:layout_alignParentRight="true"
+                    />
+            </RelativeLayout>
+            <RelativeLayout 
+                android:id="@+id/rl_auto_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+                <TextView 
+                    android:id="@+id/tv_auto_address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:text="自动定位"
+                    />
+                <TextView 
+                    android:id="@+id/tv_auto_address_select"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:text="关闭"
+                    android:layout_alignParentRight="true"
+                    />
+            </RelativeLayout>
+            <RelativeLayout 
+                android:id="@+id/rl_publish_zone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+                <TextView 
+                    android:id="@+id/tv_publish_zone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:text="看见范围"
+                    />
+                <TextView 
+                    android:id="@+id/tv_publish_zone_select"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:text="分组一"
+                    android:layout_alignParentRight="true"
+                    />
+            </RelativeLayout>
+            <RelativeLayout 
+                android:id="@+id/rl_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+                <TextView 
+                    android:id="@+id/tv_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:text="定时发送"
+                    />
+                <TextView 
+                    android:id="@+id/tv_time_select"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:text="2014-10-30 17：55"
+                    android:layout_alignParentRight="true"
+                    />
+            </RelativeLayout>
         </LinearLayout>
-    </ScrollView>
+    </com.givon.baseproject.xinlu.view.PublishScrollView>
 
 </LinearLayout>

@@ -25,6 +25,7 @@ import com.givon.baseproject.xinlu.BaseAdapter;
 import com.givon.baseproject.xinlu.BaseApplication;
 import com.givon.baseproject.xinlu.R;
 import com.givon.baseproject.xinlu.act.ActDraw;
+import com.givon.baseproject.xinlu.entity.Constant;
 import com.givon.baseproject.xinlu.entity.DetailImages;
 import com.givon.baseproject.xinlu.util.ToastUtils;
 import com.lidroid.xutils.ViewUtils;
@@ -34,7 +35,7 @@ public class PublishPhotoAdapter extends BaseAdapter<DetailImages> {
 	private final static int NOMEL = 0;
 	private final static int END = 1;
 	public final static int RESULT_CODE = 1112;
-
+	private int height;
 	public PublishPhotoAdapter(Context ctx) {
 		super(ctx);
 	}
@@ -71,7 +72,7 @@ public class PublishPhotoAdapter extends BaseAdapter<DetailImages> {
 	}
 
 	@Override
-	public View getItemView(int position, View convertView, ViewGroup parent) {
+	public View getItemView(final int position, View convertView, ViewGroup parent) {
 		int type;
 		
 		ViewHolder viewHolder = null;
@@ -105,7 +106,7 @@ public class PublishPhotoAdapter extends BaseAdapter<DetailImages> {
 			options.inJustDecodeBounds = true;
 			Bitmap bmp = BitmapFactory.decodeFile(getItem(position).getImageUrl(), options);
 			float ox = BaseApplication.mWidth/3;
-			int height = options.outHeight * ((BaseApplication.mWidth/3)/ options.outWidth);
+			height = options.outHeight * ((BaseApplication.mWidth/3)/ options.outWidth);
 			options.outWidth = (int) ox;
 			options.outHeight = height;
 			options.inJustDecodeBounds = false;
@@ -117,7 +118,11 @@ public class PublishPhotoAdapter extends BaseAdapter<DetailImages> {
 
 				@Override
 				public void onClick(View v) {
-
+					Intent intent = new Intent(mContext,ActDraw.class);
+					System.out.println("position:"+position);
+					intent.putExtra(Constant.ID, position);
+					intent.putExtra(Constant.DATA, getItem(position).getImageUrl());
+					((Activity)mContext).startActivityForResult(intent, RESULT_CODE);
 				}
 			});
 			break;
@@ -126,7 +131,9 @@ public class PublishPhotoAdapter extends BaseAdapter<DetailImages> {
 
 				@Override
 				public void onClick(View v) {
-					((Activity)mContext).startActivityForResult(new Intent(mContext,ActDraw.class), RESULT_CODE);
+					Intent intent = new Intent(mContext,ActDraw.class);
+					intent.putExtra(Constant.ID, position);
+					((Activity)mContext).startActivityForResult(intent, RESULT_CODE);
 				}
 			});
 			break;

@@ -10,7 +10,6 @@
 
 package com.givon.baseproject.xinlu.act;
 
-import java.util.HashMap;
 import java.util.Random;
 
 import android.app.Activity;
@@ -26,29 +25,21 @@ import android.widget.EditText;
 import android.widget.Toast;
 import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
-import cn.smssdk.gui.RegisterPage;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.android.support.httpclient.HttpCallBack;
 import com.android.support.httpclient.HttpClientAsync;
-import com.android.support.httpclient.HttpParams;
 import com.givon.baseproject.xinlu.BaseActivity;
 import com.givon.baseproject.xinlu.BaseApplication;
 import com.givon.baseproject.xinlu.R;
 import com.givon.baseproject.xinlu.cookie.ShareCookie;
-import com.givon.baseproject.xinlu.entity.Constant;
 import com.givon.baseproject.xinlu.entity.MemberEntity;
 import com.givon.baseproject.xinlu.util.StatisticManager;
 import com.givon.baseproject.xinlu.util.StringUtil;
 import com.givon.baseproject.xinlu.util.ToastUtils;
 import com.givon.baseproject.xinlu.util.XLHttpUrl;
-import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.ViewUtils;
-import com.lidroid.xutils.exception.HttpException;
-import com.lidroid.xutils.http.ResponseInfo;
-import com.lidroid.xutils.http.callback.RequestCallBack;
-import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.lidroid.xutils.view.annotation.ViewInject;
 
 public class ActLogin extends BaseActivity implements Callback {
@@ -74,24 +65,25 @@ public class ActLogin extends BaseActivity implements Callback {
 
 	public void doRegist(View v) {
 		// 打开注册页面
-		ActRegisterPage registerPage = new ActRegisterPage();
-		registerPage.setRegisterCallback(new EventHandler() {
-			public void afterEvent(int event, int result, Object data) {
-				// 解析注册结果
-				if (result == SMSSDK.RESULT_COMPLETE) {
-					@SuppressWarnings("unchecked")
-					HashMap<String, Object> phoneMap = (HashMap<String, Object>) data;
-					String country = (String) phoneMap.get("country");
-					String phone = (String) phoneMap.get("phone");
-					// 提交用户信息
-					// registerUser(country, phone);
-//					Intent intent = new Intent(ActLogin.this, ActRightRegist.class);
-//					intent.putExtra(Constant.PHONE, phone);
-
-				}
-			}
-		});
-		registerPage.show(this);
+		showActivity(ActRegist.class, false);
+//		ActRegisterPage registerPage = new ActRegisterPage();
+//		registerPage.setRegisterCallback(new EventHandler() {
+//			public void afterEvent(int event, int result, Object data) {
+//				// 解析注册结果
+//				if (result == SMSSDK.RESULT_COMPLETE) {
+//					@SuppressWarnings("unchecked")
+//					HashMap<String, Object> phoneMap = (HashMap<String, Object>) data;
+//					String country = (String) phoneMap.get("country");
+//					String phone = (String) phoneMap.get("phone");
+//					// 提交用户信息
+//					// registerUser(country, phone);
+////					Intent intent = new Intent(ActLogin.this, ActRightRegist.class);
+////					intent.putExtra(Constant.PHONE, phone);
+//
+//				}
+//			}
+//		});
+//		registerPage.show(this);
 	}
 
 	public void doLogin(View v) {

@@ -25,7 +25,7 @@ public abstract class BaseAdapter<T> extends android.widget.BaseAdapter {
 	public ArrayList<T> mList;
 	public Context mContext;
 	private int mTotal;
-	private BitmapUtils bitmapUtils;
+	protected BitmapUtils bitmapUtils;
 
 	public int getTotal() {
 		return mTotal;
@@ -45,8 +45,8 @@ public abstract class BaseAdapter<T> extends android.widget.BaseAdapter {
 	public BaseAdapter(Context ctx) {
 		this.mContext = ctx;
 		this.mList = new ArrayList<T>();
-		bitmapUtils = BitmapHelp.getBitmapUtils(ctx);
-		bitmapUtils.configDefaultLoadingImage(R.drawable.ic_launcher);
+		bitmapUtils = new BitmapUtils(mContext);
+//		bitmapUtils.configDefaultLoadingImage(R.drawable.ic_launcher);
 		bitmapUtils.configDefaultLoadFailedImage(R.drawable.ic_launcher);
 		bitmapUtils.configDefaultBitmapConfig(Bitmap.Config.RGB_565);
 	}

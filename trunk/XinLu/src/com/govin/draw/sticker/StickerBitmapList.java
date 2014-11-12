@@ -68,6 +68,9 @@ public class StickerBitmapList {
 	
 	//删除贴图
 	public void deleteOnTouchStickerBitmap() {
+		if(size==0){
+			return;
+		}
 		for(int i = onTouchStickerBitmapIndex; i < size - 1 ; i++) {
 			stickerBitmaps[i] = stickerBitmaps[i+1];
 		}

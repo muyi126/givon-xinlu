@@ -13,6 +13,7 @@ package com.givon.baseproject.xinlu.act;
 import java.io.File;
 import java.io.IOException;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -69,6 +70,7 @@ public class ActDrawWord extends BaseActivity implements OnClickListener {
 			Bitmap bmp;
 			try {
 				bmp = BitmapHelp.getBitpMap(new File(images.getImageUrl()));
+				System.out.println("images.getImageUrl():"+images.getImageUrl());
 				if (null != bmp) {
 					drawView.setBackgroundBitmap(bmp, false);
 				}
@@ -176,6 +178,8 @@ public class ActDrawWord extends BaseActivity implements OnClickListener {
 			public void onClickSure(String string) {
 				drawView.editStickerBitmapTT_now(
 						graphicUtil.GetTextPaintClass(GeometryUtil.TextType.SONG), string);
+				drawView.setEditTextVisibleStucker(false);
+				
 			}
 
 			@Override
@@ -195,10 +199,15 @@ public class ActDrawWord extends BaseActivity implements OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.bt_finish:
-
+			DetailImages image = drawView.saveBitmap();
+			Intent intent = new Intent();
+			intent.putExtra(Constant.DATA, image);
+			setResult(Activity.RESULT_OK, intent);
+			finish();
 			break;
 		case R.id.bt_cancel:
-
+			setResult(Activity.RESULT_CANCELED);
+			finish();
 			break;
 
 		default:

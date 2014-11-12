@@ -361,6 +361,7 @@ public class TimeToUtil {
 	public final static String ACCURATE_TO_THE_STRINGS = "yyyyMMddHHmmss";
 	public final static String ACCURATE_TO_THE_WEEK_DAY = "dd/MM  EEEE";
 	public final static String ACCURATE_TO_THE_WEEK_DAY_A = "dd/MM  HH:mm:ss";
+	public final static String ACCURATE_TO_ZUJI = "MM-dd  HH:mm";
 
 	public static long getSystemTime() {
 		return System.currentTimeMillis();

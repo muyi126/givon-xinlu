@@ -72,6 +72,9 @@ public class AppTitleBar extends RelativeLayout {
 	public void setBackOnClickListener(OnClickListener l) {
 		mBackListener = l;
 		mLeftBackground.setOnClickListener(l);
+		if(!StringUtil.isEmpty(mTitleBack.getText().toString())){
+			mTitleBack.setOnClickListener(l);
+		}
 	}
 
 	public OnClickListener getBackOnClickListener() {
@@ -167,6 +170,12 @@ public class AppTitleBar extends RelativeLayout {
 
 	public void setLeftBackground(int resId) {
 		mLeftBackground.setImageResource(resId);
+	}
+	public void setBackTitle(String backString) {
+		if(!StringUtil.isEmpty(backString)){
+			mTitleBack.setText(backString);
+			mLeftBackground.setVisibility(View.INVISIBLE);
+		}
 	}
 
 	public void setDismissmTitleBack() {

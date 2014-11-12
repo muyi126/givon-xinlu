@@ -48,7 +48,7 @@ public class ColorPickerView extends View {
 	/**
 	 * The width in dp of the hue panel.
 	 */
-	private float HUE_PANEL_WIDTH = 30f;
+	private float HUE_PANEL_HEIGHT = 20f;
 	/**
 	 * The height in dp of the alpha panel
 	 */
@@ -136,7 +136,7 @@ public class ColorPickerView extends View {
 		mDensity = getContext().getResources().getDisplayMetrics().density;
 		PALETTE_CIRCLE_TRACKER_RADIUS *= mDensity;
 		RECTANGLE_TRACKER_OFFSET *= mDensity;
-		HUE_PANEL_WIDTH *= mDensity;
+		HUE_PANEL_HEIGHT *= mDensity;
 		ALPHA_PANEL_HEIGHT *= mDensity;
 		PANEL_SPACING = PANEL_SPACING * mDensity;
 
@@ -216,8 +216,9 @@ public class ColorPickerView extends View {
 
 		if (BORDER_WIDTH_PX > 0) {
 			mBorderPaint.setColor(mBorderColor);
-			canvas.drawRect(rect.left - BORDER_WIDTH_PX, rect.top - BORDER_WIDTH_PX, rect.right
-					+ BORDER_WIDTH_PX, rect.bottom + BORDER_WIDTH_PX, mBorderPaint);
+//			canvas.drawRect(rect.left - BORDER_WIDTH_PX, rect.top - BORDER_WIDTH_PX, rect.right
+//					+ BORDER_WIDTH_PX, rect.bottom + BORDER_WIDTH_PX, mBorderPaint);
+			canvas.drawRoundRect(rect, 8f, 5f, mBorderPaint);
 		}
 		if (mHueShader == null) {
 			mHueShader = new LinearGradient(rect.left, rect.top, rect.right, rect.top,
@@ -225,7 +226,7 @@ public class ColorPickerView extends View {
 			mHuePaint.setShader(mHueShader);
 		}
 
-		canvas.drawRect(rect, mHuePaint);
+		canvas.drawRoundRect(rect,8f,5f, mHuePaint);
 
 		float rectWidth = 4 * mDensity / 2;
 
@@ -420,9 +421,9 @@ public class ColorPickerView extends View {
 		// float bottom = dRect.bottom - BORDER_WIDTH_PX - (mShowAlphaPanel ? (PANEL_SPACING + ALPHA_PANEL_HEIGHT) : 0);
 		// float right = dRect.right - BORDER_WIDTH_PX;
 		float left = dRect.left;
-		float top = dRect.top + BORDER_WIDTH_PX;
+		float top = (mDrawingRect.bottom-mDrawingRect.top)/2+dRect.top-HUE_PANEL_HEIGHT/2 + BORDER_WIDTH_PX;
 		// float bottom = dRect.bottom - BORDER_WIDTH_PX - (mShowAlphaPanel ? (PANEL_SPACING + ALPHA_PANEL_HEIGHT) : 0);
-		float bottom = 60;
+		float bottom = (mDrawingRect.bottom-mDrawingRect.top)/2+dRect.top+HUE_PANEL_HEIGHT/2;
 		float right = dRect.right - BORDER_WIDTH_PX;
 
 		mHueRect = new RectF(left, top, right, bottom);
