@@ -93,8 +93,11 @@ public abstract class BaseActivity extends Activity {
 	}
 
 	public void showWaitingDialog() {
+		showWaitingDialog(true);
+	}
+	public void showWaitingDialog(boolean isCancel) {
 		if (mWaitingDialog == null) {
-			mWaitingDialog = new WaitingDialog(this);
+			mWaitingDialog = new WaitingDialog(this,isCancel);
 			// mWaitingDialog = new ProgressDialog(this);
 			mWaitingDialog.setCanceledOnTouchOutside(false);
 			// mWaitingDialog.setMessage(getString(R.string.action_waiting));
@@ -104,10 +107,12 @@ public abstract class BaseActivity extends Activity {
 			mWaitingDialog.show();
 		}
 	}
-
-	public void showWaitingDialog(String msg) {
+	public void showWaitingDialog(String msg){
+		showWaitingDialog(msg, true);
+	}
+	public void showWaitingDialog(String msg,boolean isCancel) {
 		if (mWaitingDialog == null) {
-			mWaitingDialog = new WaitingDialog(this);
+			mWaitingDialog = new WaitingDialog(this,isCancel);
 			// mWaitingDialog = new ProgressDialog(this);
 			mWaitingDialog.setCanceledOnTouchOutside(false);
 			// mWaitingDialog.setMessage(getString(R.string.action_waiting));

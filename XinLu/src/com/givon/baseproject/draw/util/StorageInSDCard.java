@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.os.Environment;
 import android.widget.Toast;
 
+import com.givon.baseproject.xinlu.entity.Constant;
 import com.givon.baseproject.xinlu.entity.DetailImages;
 import com.givon.baseproject.xinlu.util.FileCache;
 
@@ -38,7 +39,7 @@ public class StorageInSDCard {
 	public static DetailImages saveBitmapInExternalStorage(Bitmap bitmap,Context context) {
 		try {
 			if(IsExternalStorageAvailableAndWriteable()) {
-				File extStorage = new File(Environment.getExternalStorageDirectory().getPath() +"/drawpics");
+				File extStorage = new File(Constant.DRAW_PATH);
 				if (!extStorage.exists()) {
 					extStorage.mkdirs();
 				}
@@ -46,8 +47,8 @@ public class StorageInSDCard {
 				File file = new File(extStorage,nameString+".jpg");
 				if(file.exists()){
 					DetailImages detailImages = new DetailImages();
-					detailImages.setHeightSize(DrawAttribute.screenHeight);
-					detailImages.setWidthSize(DrawAttribute.screenWidth);
+					detailImages.setHeightSize(bitmap.getHeight());
+					detailImages.setWidthSize(bitmap.getWidth());
 					detailImages.setImageUrl(file.getPath());
 					return detailImages;
 				}
@@ -57,8 +58,8 @@ public class StorageInSDCard {
 				fOut.close();
 				Toast.makeText(context,  "保存成功", Toast.LENGTH_SHORT).show();
 				DetailImages detailImages = new DetailImages();
-				detailImages.setHeightSize(DrawAttribute.screenHeight_out);
-				detailImages.setWidthSize(DrawAttribute.screenWidth_out);
+				detailImages.setHeightSize(bitmap.getHeight());
+				detailImages.setWidthSize(bitmap.getWidth());
 				detailImages.setImageUrl(file.getPath());
 				return detailImages;
 			}

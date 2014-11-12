@@ -10,27 +10,29 @@
 
 package com.givon.baseproject.xinlu.fragment;
 
+import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
+
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Calendar;
+import java.util.Locale;
 
-import android.R.integer;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
-import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images.Thumbnails;
 import android.provider.MediaStore.Video;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -46,19 +48,24 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.givon.baseproject.draw.util.BackgroundUtil;
 import com.givon.baseproject.draw.util.DrawAttribute;
-import com.givon.baseproject.draw.util.GeometryUtil;
-import com.givon.baseproject.draw.util.StickerUtil;
-import com.givon.baseproject.draw.util.TuYaUtil;
+import com.givon.baseproject.xinlu.BaseApplication;
 import com.givon.baseproject.xinlu.BaseFragment;
 import com.givon.baseproject.xinlu.R;
+import com.givon.baseproject.xinlu.act.ActDrawLvJing;
+import com.givon.baseproject.xinlu.act.ActDrawTuAn;
+import com.givon.baseproject.xinlu.act.ActDrawTuYa;
 import com.givon.baseproject.xinlu.act.ActDrawWord;
 import com.givon.baseproject.xinlu.act.ActPublish;
 import com.givon.baseproject.xinlu.entity.Constant;
 import com.givon.baseproject.xinlu.entity.DetailImages;
 import com.givon.baseproject.xinlu.util.BitmapHelp;
+import com.givon.baseproject.xinlu.util.CommUtil;
+import com.givon.baseproject.xinlu.util.StringUtil;
+import com.givon.baseproject.xinlu.util.ToastUtils;
 import com.givon.baseproject.xinlu.view.DrawView;
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.Animator.AnimatorListener;
 
 /**
  * 发布
@@ -67,36 +74,36 @@ import com.givon.baseproject.xinlu.view.DrawView;
  */
 public class FraPublish extends BaseFragment {
 	private DrawView drawView;
-	private LinearLayout rightBar;
+	// private LinearLayout rightBar;
 	private LinearLayout bottomBar;
 	public int brushDrawableId;
-	// private HorizontalScrollView markerList;
-	// private HorizontalScrollView crayonList;
-	// private HorizontalScrollView colorList;
 	private HorizontalScrollView stamppenList;
-	private HorizontalScrollView backgroundList;
-	// private HorizontalScrollView eraserList;
-	private LinearLayout stickerList;
-	private LinearLayout geometryTool;
+	private LinearLayout rightPhotoContentLayout_ly;
 	private LinearLayout rightPhotoToo_ly;
-	private LinearLayout tuyaTool;
 	private Activity activity;
 	private View mView;
 	private Button saveButton;
 	private ArrayList<DetailImages> filesList = new ArrayList<DetailImages>();
-	private int currentBitMap = 0;
+	private ArrayList<SLBitmap> photos = new ArrayList<FraPublish.SLBitmap>();
+	private boolean isCheckBitmap = false;
 	private final static int PUBLISH_SHOW_RESULT = 12311;
-	//文字
+	// 文字
 	private final static int PUBLISH_SHOW_DRAWWORD_RESULT = 12312;
-	//涂鸦
+	// 涂鸦
 	private final static int PUBLISH_SHOW_DRAWTUYA_RESULT = 12313;
-	//图案
+	// 图案
 	private final static int PUBLISH_SHOW_DRAWTUAN_RESULT = 12314;
-	//滤镜
+	// 滤镜
 	private final static int PUBLISH_SHOW_DRAWLVJING_RESULT = 12315;
-
-	// private LinearLayout picTool;
-	// private LinearLayout wordTool;
+	// 图片选择
+	private final static int SHELECT_PHOTO_RESULT = 12316;
+	// 拍照
+	private final static int SHELECT_TAKE_PHOTO_RESULT = 12317;
+	private ImageButton visible_Right_bt;
+	private ImageButton to_Photo_bt;
+	private ImageButton to_TakePhoto_bt;
+	private boolean isRightVisible = true;
+	private static int ANIM_TIME = 500;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -105,76 +112,92 @@ public class FraPublish extends BaseFragment {
 		activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		mView = activity.getLayoutInflater().inflate(R.layout.layout_frapublish, null);
-		rightPhotoToo_ly = (LinearLayout) mView.findViewById(R.id.ly_photos);
-		saveButton = (Button) mView.findViewById(R.id.finish);
-		ArrayList<SLBitmap> photos = viewPhoto();
-		for (int i = 0; i < photos.size(); i++) {
-			ImageView imageView = new ImageView(activity);
-			imageView.setTag(photos.get(i));
-			LayoutParams params = new LayoutParams(60, 60);
-			imageView.setBackgroundDrawable(new BitmapDrawable(photos.get(i).bitmap));
-			rightPhotoToo_ly.addView(imageView, params);
-			imageView.setOnClickListener(new OnClickListener() {
 
-				@Override
-				public void onClick(View v) {
-					SLBitmap obj = (SLBitmap) v.getTag();
-					if (obj.isCheck) {
-						obj.isCheck = false;
-						Bitmap bmp;
-						try {
-							bmp = BitmapHelp.getBitpMap(new File(obj.path));
-							if (null != bmp) {
-								drawView.addStickerBitmap(bmp);
-							}
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					} else {
-						obj.isCheck = true;
-						drawView.deleteStickerBitmap(null);
-					}
-					v.setTag(obj);
-				}
-			});
-		}
-		// 设置默认选择黑色水笔
-		// ImageView imageView = (ImageView) findViewById(R.id.marker01);
-		// imageView.scrollTo(0, 0);
-		// brushDrawableId = R.id.marker01;
-		rightBar = (LinearLayout) mView.findViewById(R.id.drawright);
-		bottomBar = (LinearLayout) mView.findViewById(R.id.drawbottom);
-		// 此处有用处，切勿删除
-		rightBar.setOnClickListener(new OnClickListener() {
+		rightPhotoContentLayout_ly = (LinearLayout) mView.findViewById(R.id.ly_photos);
+		to_Photo_bt = (ImageButton) mView.findViewById(R.id.to_photo_bt);
+		to_Photo_bt.setOnClickListener(new OnClickListener() {
+
 			@Override
 			public void onClick(View v) {
+				loadPhotos(SHELECT_PHOTO_RESULT);
 			}
 		});
-		// 此处有用处，切勿删除
+		to_TakePhoto_bt = (ImageButton) mView.findViewById(R.id.to_takephoto_bt);
+		to_TakePhoto_bt.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				takePhoto();
+			}
+		});
+		visible_Right_bt = (ImageButton) mView.findViewById(R.id.visible_Right);
+		visible_Right_bt.setVisibility(View.GONE);
+		rightPhotoToo_ly = (LinearLayout) mView.findViewById(R.id.drawright);
+		animate(rightPhotoToo_ly).setDuration(0);
+		animate(rightPhotoToo_ly).x(BaseApplication.mWidth);
+		System.out.println("An:" + (BaseApplication.mWidth - visible_Right_bt.getWidth()));
+		animate(visible_Right_bt).x(BaseApplication.mWidth - CommUtil.dip2px(45)).setListener(
+				new AnimatorListener() {
+
+					@Override
+					public void onAnimationStart(Animator animation) {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public void onAnimationRepeat(Animator animation) {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public void onAnimationEnd(Animator animation) {
+						animate(visible_Right_bt).alpha(100);
+
+					}
+
+					@Override
+					public void onAnimationCancel(Animator animation) {
+						// TODO Auto-generated method stub
+
+					}
+				});
+		saveButton = (Button) mView.findViewById(R.id.finish);
+		bottomBar = (LinearLayout) mView.findViewById(R.id.drawbottom);
 		bottomBar.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 			}
 		});
+		ViewRightBarTask task = new ViewRightBarTask();
+		task.execute();
+		visible_Right_bt.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (isRightVisible) {
+					isRightVisible = false;
+					// visible_Right_bt.setVisibility(View.GONE);
+					int xValue = BaseApplication.mWidth - 60;
+					animate(rightPhotoToo_ly).setDuration(ANIM_TIME);
+					animate(rightPhotoToo_ly).x(xValue);
+					animate(visible_Right_bt).x(
+							BaseApplication.mWidth - visible_Right_bt.getWidth()
+									- 60);
+				} else {
+					isRightVisible = true;
+					visible_Right_bt.setVisibility(View.VISIBLE);
+					animate(rightPhotoToo_ly).setDuration(ANIM_TIME);
+					animate(rightPhotoToo_ly).x(BaseApplication.mWidth);
+					animate(visible_Right_bt).x(
+							BaseApplication.mWidth - visible_Right_bt.getWidth());
+				}
+
+			}
+		});
 		drawView = (DrawView) mView.findViewById(R.id.drawview);
 		drawView.setFraPublish(this);
-		// Intent intent = this.getIntent();
-		// Bundle bundle = intent.getExtras();
-		// if (bundle != null) {
-		// String backgroundBitmapPath = bundle
-		// .getString("com.example.finaldesign.BackgroundBitmapPath");
-		// Bitmap bitmap = BitmapFactory.decodeFile(backgroundBitmapPath);
-		// drawView.setBackgroundBitmap(bitmap, false);
-		// }
-		geometryTool = (LinearLayout) mView.findViewById(R.id.geometrytool);
-		tuyaTool = (LinearLayout) mView.findViewById(R.id.tuyatool);
-		backgroundList = (HorizontalScrollView) mView.findViewById(R.id.backgroundlist);
-		stickerList = (LinearLayout) mView.findViewById(R.id.stickerlist);
-//		geometryTool.setVisibility(View.VISIBLE);
-//		tuyaTool.setVisibility(View.INVISIBLE);
-//		backgroundList.setVisibility(View.INVISIBLE);
-//		stickerList.setVisibility(View.INVISIBLE);
 		// 下面的菜单
 		TextView drawTextButton = (TextView) mView.findViewById(R.id.drawText);
 		TextView drawTuyaButton = (TextView) mView.findViewById(R.id.drawTuya);
@@ -182,7 +205,7 @@ public class FraPublish extends BaseFragment {
 		TextView drawLvjinButton = (TextView) mView.findViewById(R.id.drawLvjin);
 		TextView drawTuanButton = (TextView) mView.findViewById(R.id.drawTuan);
 		// 上面的菜单
-		ImageButton visibleButton = (ImageButton) mView.findViewById(R.id.drawvisiblebtn);
+		// ImageButton visibleButton = (ImageButton) mView.findViewById(R.id.drawvisiblebtn);
 		Button undoButton = (Button) mView.findViewById(R.id.drawundobtn);
 		Button redoButton = (Button) mView.findViewById(R.id.drawredobtn);
 		// 选择文字
@@ -196,17 +219,14 @@ public class FraPublish extends BaseFragment {
 					break;
 				case MotionEvent.ACTION_UP:
 					v.setBackgroundColor(0x00ffffff);
-//					geometryTool.setVisibility(View.VISIBLE);
-//					tuyaTool.setVisibility(View.INVISIBLE);
-//					backgroundList.setVisibility(View.INVISIBLE);
-//					stickerList.setVisibility(View.INVISIBLE);
-//					drawView.setCanDraw(false);
-					
+
 					DetailImages image = drawView.saveBitmap();
+					drawView.freeBitmaps2();
 					filesList.add(image);
-					Intent intent = new Intent(getActivity(),ActDrawWord.class);
+					Intent intent = new Intent(getActivity(), ActDrawWord.class);
 					intent.putExtra(Constant.DATA, image);
-					getActivity().startActivityForResult(intent, PUBLISH_SHOW_DRAWWORD_RESULT);
+					FraPublish.this.startActivityForResult(intent, PUBLISH_SHOW_DRAWWORD_RESULT);
+					drawView.setCanDraw(false);
 					break;
 				case MotionEvent.ACTION_CANCEL:
 					v.setBackgroundColor(0x00ff0000);
@@ -226,11 +246,13 @@ public class FraPublish extends BaseFragment {
 					break;
 				case MotionEvent.ACTION_UP:
 					v.setBackgroundColor(0x00ffffff);
-					geometryTool.setVisibility(View.INVISIBLE);
-					tuyaTool.setVisibility(View.VISIBLE);
-					backgroundList.setVisibility(View.INVISIBLE);
-					stickerList.setVisibility(View.INVISIBLE);
-					drawView.setCanDraw(true);
+
+					DetailImages image = drawView.saveBitmap();
+					filesList.add(image);
+					Intent intent = new Intent(getActivity(), ActDrawTuYa.class);
+					intent.putExtra(Constant.DATA, image);
+					FraPublish.this.startActivityForResult(intent, PUBLISH_SHOW_DRAWTUYA_RESULT);
+					drawView.setCanDraw(false);
 					break;
 				case MotionEvent.ACTION_CANCEL:
 					v.setBackgroundColor(0x00ff0000);
@@ -250,10 +272,10 @@ public class FraPublish extends BaseFragment {
 					break;
 				case MotionEvent.ACTION_UP:
 					v.setBackgroundColor(0x00ffffff);
-					geometryTool.setVisibility(View.INVISIBLE);
-					tuyaTool.setVisibility(View.INVISIBLE);
-					backgroundList.setVisibility(View.INVISIBLE);
-					stickerList.setVisibility(View.INVISIBLE);
+					// geometryTool.setVisibility(View.INVISIBLE);
+					// tuyaTool.setVisibility(View.INVISIBLE);
+					// backgroundList.setVisibility(View.INVISIBLE);
+					// stickerList.setVisibility(View.INVISIBLE);
 					drawView.setCanDraw(false);
 					break;
 				case MotionEvent.ACTION_CANCEL:
@@ -274,10 +296,12 @@ public class FraPublish extends BaseFragment {
 					break;
 				case MotionEvent.ACTION_UP:
 					v.setBackgroundColor(0x00ffffff);
-					geometryTool.setVisibility(View.INVISIBLE);
-					tuyaTool.setVisibility(View.INVISIBLE);
-					backgroundList.setVisibility(View.INVISIBLE);
-					stickerList.setVisibility(View.INVISIBLE);
+					
+					DetailImages image = drawView.saveBitmap();
+					filesList.add(image);
+					Intent intent = new Intent(getActivity(), ActDrawLvJing.class);
+					intent.putExtra(Constant.DATA, image);
+					FraPublish.this.startActivityForResult(intent, PUBLISH_SHOW_DRAWLVJING_RESULT);
 					drawView.setCanDraw(false);
 					break;
 				case MotionEvent.ACTION_CANCEL:
@@ -298,10 +322,11 @@ public class FraPublish extends BaseFragment {
 					break;
 				case MotionEvent.ACTION_UP:
 					v.setBackgroundColor(0x00ffffff);
-					geometryTool.setVisibility(View.INVISIBLE);
-					tuyaTool.setVisibility(View.INVISIBLE);
-					backgroundList.setVisibility(View.INVISIBLE);
-					stickerList.setVisibility(View.VISIBLE);
+					DetailImages image = drawView.saveBitmap();
+					filesList.add(image);
+					Intent intent = new Intent(getActivity(), ActDrawTuAn.class);
+					intent.putExtra(Constant.DATA, image);
+					FraPublish.this.startActivityForResult(intent, PUBLISH_SHOW_DRAWTUAN_RESULT);
 					drawView.setCanDraw(false);
 					break;
 				case MotionEvent.ACTION_CANCEL:
@@ -311,208 +336,6 @@ public class FraPublish extends BaseFragment {
 				return true;
 			}
 		});
-		// // 选择壁纸按钮
-		// backgroundButton.setOnTouchListener(new OnTouchListener()
-		// {
-		//
-		// @Override
-		// public boolean onTouch(View v, MotionEvent event)
-		// {
-		// switch (event.getAction())
-		// {
-		// case MotionEvent.ACTION_DOWN:
-		// v.setBackgroundColor(DrawAttribute.backgroundOnClickColor);
-		// break;
-		// case MotionEvent.ACTION_UP:
-		// v.setBackgroundColor(0x00ffffff);
-		// markerList.setVisibility(View.INVISIBLE);
-		// crayonList.setVisibility(View.INVISIBLE);
-		// colorList.setVisibility(View.INVISIBLE);
-		// geometryTool.setVisibility(View.INVISIBLE);
-		// stamppenList.setVisibility(View.INVISIBLE);
-		// backgroundList.setVisibility(View.VISIBLE);
-		// stickerList.setVisibility(View.INVISIBLE);
-		// eraserList.setVisibility(View.INVISIBLE);
-		// picTool.setVisibility(View.INVISIBLE);
-		// wordTool.setVisibility(View.INVISIBLE);
-		// break;
-		// case MotionEvent.ACTION_CANCEL:
-		// v.setBackgroundColor(0x00ff0000);
-		// }
-		// flawOperation();
-		// return true;
-		// }
-		// });
-		// // 选择素材按钮
-		// stickerButton.setOnTouchListener(new OnTouchListener()
-		// {
-		//
-		// @Override
-		// public boolean onTouch(View v, MotionEvent event)
-		// {
-		// switch (event.getAction())
-		// {
-		// case MotionEvent.ACTION_DOWN:
-		// v.setBackgroundColor(DrawAttribute.backgroundOnClickColor);
-		// break;
-		// case MotionEvent.ACTION_UP:
-		// v.setBackgroundColor(0x00ffffff);
-		// markerList.setVisibility(View.INVISIBLE);
-		// crayonList.setVisibility(View.INVISIBLE);
-		// colorList.setVisibility(View.INVISIBLE);
-		// geometryTool.setVisibility(View.INVISIBLE);
-		// stamppenList.setVisibility(View.INVISIBLE);
-		// backgroundList.setVisibility(View.INVISIBLE);
-		// stickerList.setVisibility(View.VISIBLE);
-		// eraserList.setVisibility(View.INVISIBLE);
-		// picTool.setVisibility(View.INVISIBLE);
-		// wordTool.setVisibility(View.INVISIBLE);
-		// break;
-		// case MotionEvent.ACTION_CANCEL:
-		// v.setBackgroundColor(0x00ff0000);
-		// }
-		// flawOperation();
-		// return true;
-		// }
-		// });
-		// // 选择橡皮按钮
-		// eraserButton.setOnTouchListener(new OnTouchListener()
-		// {
-		//
-		// @Override
-		// public boolean onTouch(View v, MotionEvent event)
-		// {
-		// switch (event.getAction())
-		// {
-		// case MotionEvent.ACTION_DOWN:
-		// v.setBackgroundColor(DrawAttribute.backgroundOnClickColor);
-		// break;
-		// case MotionEvent.ACTION_UP:
-		// v.setBackgroundColor(0x00ffffff);
-		// markerList.setVisibility(View.INVISIBLE);
-		// crayonList.setVisibility(View.INVISIBLE);
-		// colorList.setVisibility(View.INVISIBLE);
-		// geometryTool.setVisibility(View.INVISIBLE);
-		// stamppenList.setVisibility(View.INVISIBLE);
-		// backgroundList.setVisibility(View.INVISIBLE);
-		// stickerList.setVisibility(View.INVISIBLE);
-		// eraserList.setVisibility(View.VISIBLE);
-		// picTool.setVisibility(View.INVISIBLE);
-		// wordTool.setVisibility(View.INVISIBLE);
-		// break;
-		// case MotionEvent.ACTION_CANCEL:
-		// v.setBackgroundColor(0x00ff0000);
-		// }
-		// flawOperation();
-		// return true;
-		// }
-		// });
-		// // 选择图片按钮
-		// picButton.setOnTouchListener(new OnTouchListener()
-		// {
-		//
-		// @Override
-		// public boolean onTouch(View v, MotionEvent event)
-		// {
-		// switch (event.getAction())
-		// {
-		// case MotionEvent.ACTION_DOWN:
-		// v.setBackgroundColor(DrawAttribute.backgroundOnClickColor);
-		// break;
-		// case MotionEvent.ACTION_UP:
-		// v.setBackgroundColor(0x00ffffff);
-		// markerList.setVisibility(View.INVISIBLE);
-		// crayonList.setVisibility(View.INVISIBLE);
-		// colorList.setVisibility(View.INVISIBLE);
-		// geometryTool.setVisibility(View.INVISIBLE);
-		// stamppenList.setVisibility(View.INVISIBLE);
-		// backgroundList.setVisibility(View.INVISIBLE);
-		// stickerList.setVisibility(View.INVISIBLE);
-		// eraserList.setVisibility(View.INVISIBLE);
-		// picTool.setVisibility(View.VISIBLE);
-		// wordTool.setVisibility(View.INVISIBLE);
-		// break;
-		// case MotionEvent.ACTION_CANCEL:
-		// v.setBackgroundColor(0x00ff0000);
-		// }
-		// flawOperation();
-		// return true;
-		// }
-		// });
-		// // 点击文字按钮
-		// wordsButton.setOnTouchListener(new OnTouchListener()
-		// {
-		//
-		// @Override
-		// public boolean onTouch(View v, MotionEvent event)
-		// {
-		// switch (event.getAction())
-		// {
-		// case MotionEvent.ACTION_DOWN:
-		// v.setBackgroundColor(DrawAttribute.backgroundOnClickColor);
-		// break;
-		// case MotionEvent.ACTION_UP:
-		// v.setBackgroundColor(0x00ffffff);
-		// markerList.setVisibility(View.INVISIBLE);
-		// crayonList.setVisibility(View.INVISIBLE);
-		// colorList.setVisibility(View.INVISIBLE);
-		// geometryTool.setVisibility(View.INVISIBLE);
-		// stamppenList.setVisibility(View.INVISIBLE);
-		// backgroundList.setVisibility(View.INVISIBLE);
-		// stickerList.setVisibility(View.INVISIBLE);
-		// eraserList.setVisibility(View.INVISIBLE);
-		// picTool.setVisibility(View.INVISIBLE);
-		// wordTool.setVisibility(View.VISIBLE);
-		// break;
-		// case MotionEvent.ACTION_CANCEL:
-		// v.setBackgroundColor(0x00ff0000);
-		// }
-		// flawOperation();
-		// return true;
-		// }
-		// });
-		// // 设置水彩笔点击监听
-		// CasualWaterUtil casualWaterUtil = new CasualWaterUtil(this, drawView);
-		// casualWaterUtil.casualWaterPicSetOnClickListener();
-		// // 设置蜡笔点击监听
-		// CasualCrayonUtil casualCrayonUtil = new CasualCrayonUtil(this, drawView);
-		// casualCrayonUtil.casualCrayonPicSetOnClickListener();
-		// // 设置颜料笔点击监听
-		// CasualColorUtil casualColorUtil = new CasualColorUtil(this, drawView);
-		// casualColorUtil.casualColorPicSetOnClickListener();
-		//
-		// 文字
-//		GeometryUtil graphicUtil = new GeometryUtil(activity, mView, drawView);
-//		graphicUtil.graphicPicSetOnClickListener();
-		// 涂鸦
-//		TuYaUtil tuYaUtil = new TuYaUtil(activity, mView, drawView);
-//		tuYaUtil.tuyaPicSetOnClickListener();
-		// // 设置印花点击的监听
-		// StamppenUtil stamppenUtil = new StamppenUtil(this, drawView);
-		// stamppenUtil.stampPenPicSetOnClickListener();
-		// 设置背景图片点击的监听
-//		BackgroundUtil backgroundUtil = new BackgroundUtil(activity, mView, drawView);
-//		backgroundUtil.backgroundPicSetOnClickListener();
-		// // 设置橡皮点击的监听
-		// EraserUtil eraserUtil = new EraserUtil(this, drawView);
-		// eraserUtil.eraserPicSetOnClickListener();
-		// // 设置素材点击的监听
-//		StickerUtil stickerUtil = new StickerUtil(activity, mView, drawView);
-//		stickerUtil.stickerPicSetOnClickListener();
-		// // 设置图片点击的监听
-		// PicUtil picUtil = new PicUtil(this);
-		// picUtil.picPicSetOnClickListener();
-		// // 点击返回按钮
-		// drawbackButton.setOnClickListener(new Button.OnClickListener()
-		// {
-		// public void onClick(View v)
-		// {
-		// Intent intent = new Intent();
-		// intent.setClass(DrawActivity.this, MainActivity.class);
-		// startActivity(intent);
-		// DrawActivity.this.finish();
-		// }
-		// });
 		// 点击保存按钮
 		saveButton.setOnClickListener(new Button.OnClickListener() {
 			public void onClick(View v) {
@@ -536,11 +359,11 @@ public class FraPublish extends BaseFragment {
 			}
 		});
 		// 点击隐形按钮
-		visibleButton.setOnClickListener(new Button.OnClickListener() {
-			public void onClick(View v) {
-				setUpAndButtomBarVisible(false);
-			}
-		});
+		// visibleButton.setOnClickListener(new Button.OnClickListener() {
+		// public void onClick(View v) {
+		// setUpAndButtomBarVisible(false);
+		// }
+		// });
 	}
 
 	@Override
@@ -559,11 +382,11 @@ public class FraPublish extends BaseFragment {
 
 	public void setUpAndButtomBarVisible(boolean isVisible) {
 		if (isVisible) {
-			rightBar.setVisibility(View.VISIBLE);
-			bottomBar.setVisibility(View.VISIBLE);
+			// rightBar.setVisibility(View.VISIBLE);
+			// bottomBar.setVisibility(View.VISIBLE);
 		} else {
-			rightBar.setVisibility(View.INVISIBLE);
-			bottomBar.setVisibility(View.INVISIBLE);
+			// rightBar.setVisibility(View.INVISIBLE);
+			// bottomBar.setVisibility(View.INVISIBLE);
 		}
 	}
 
@@ -593,10 +416,58 @@ public class FraPublish extends BaseFragment {
 		return bitmaps;
 	}
 
+	private SLBitmap viewPhotoForUri(Uri uri) {
+		String[] projection = new String[] { MediaStore.Images.ImageColumns._ID, Thumbnails.DATA,
+				MediaStore.Images.ImageColumns.DATE_TAKEN };
+		Cursor cursor = activity.managedQuery(uri, projection, null, null,
+				MediaStore.Images.ImageColumns.DATE_TAKEN + " DESC");
+		ContentResolver cr = activity.getContentResolver();
+		if (cursor == null) {
+			return null;
+		}
+		cursor.moveToFirst();
+		SLBitmap sBitmap = new SLBitmap();
+		long thumbNailsId = cursor.getLong(cursor.getColumnIndex("_ID"));
+		Bitmap bitmap = MediaStore.Images.Thumbnails.getThumbnail(cr, thumbNailsId,
+				Video.Thumbnails.MICRO_KIND, null);
+		sBitmap.bitmap = bitmap;
+		int dataColumn = cursor.getColumnIndex(Thumbnails.DATA);
+		String path = cursor.getString(dataColumn);
+		sBitmap.path = path;
+		return sBitmap;
+	}
+
+	/**
+	 * 选择图片后，获取图片的路径
+	 * @param requestCode
+	 * @param data
+	 */
+	private SLBitmap doPhoto(String picPath) {
+		if (picPath != null) {
+			BitmapFactory.Options options = new BitmapFactory.Options();
+			options.inJustDecodeBounds = true;
+			Bitmap bmp = BitmapFactory.decodeFile(picPath, options);
+			float ox = BaseApplication.mWidth / 3;
+			options.outWidth = 60;
+			options.outHeight = 60;
+			options.inJustDecodeBounds = false;
+			options.inSampleSize = (int) (options.outWidth / ox);
+			options.inPreferredConfig = Bitmap.Config.ARGB_4444;
+			bmp = BitmapFactory.decodeFile(picPath, options);
+			SLBitmap sBitmap = new SLBitmap();
+			sBitmap.bitmap = bmp;
+			sBitmap.path = picPath;
+			return sBitmap;
+		} else {
+			ToastUtils.showMessage("选择文件不正确!");
+			return null;
+		}
+	}
+
 	private class SLBitmap {
 		Bitmap bitmap;
 		String path;
-		boolean isCheck = true;
+		boolean isCheckEnable = true;
 
 		SLBitmap() {
 
@@ -613,69 +484,150 @@ public class FraPublish extends BaseFragment {
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		// PIC_STORAGE_BG=1 PIC_STORAGE_STICKER=2 PIC_CAMERA_BG=3
-		// PIC_CAMERA_STICKER=4
-
 		if (requestCode == PUBLISH_SHOW_RESULT) {
+			ViewRightBarTask task = new ViewRightBarTask();
+			task.execute();
 			drawView.initView();
 		}
-		//滤镜
-		if(requestCode == PUBLISH_SHOW_DRAWLVJING_RESULT){
-			
+		// 滤镜
+		if (requestCode == PUBLISH_SHOW_DRAWLVJING_RESULT) {
+			resultInitDraw(resultCode, data);
 			return;
-		}else 
-			//图案
-			if (requestCode== PUBLISH_SHOW_DRAWTUAN_RESULT) {
-				return;
-		}else 
-			//涂鸦
-			if (requestCode== PUBLISH_SHOW_DRAWTUYA_RESULT) {
-				return;
-		}else 
-			//文字
-			if (requestCode== PUBLISH_SHOW_DRAWWORD_RESULT) {
-				return;
+		} else
+		// 图案
+		if (requestCode == PUBLISH_SHOW_DRAWTUAN_RESULT) {
+			resultInitDraw(resultCode, data);
+			return;
+		} else
+		// 涂鸦
+		if (requestCode == PUBLISH_SHOW_DRAWTUYA_RESULT) {
+			resultInitDraw(resultCode, data);
+			return;
+		} else
+		// 文字
+		if (requestCode == PUBLISH_SHOW_DRAWWORD_RESULT) {
+			resultInitDraw(resultCode, data);
+			return;
 		}
-		if ((requestCode >= 1 && requestCode <= 4) && resultCode == Activity.RESULT_OK
-				&& null != data) {
-			Uri selectedImage = data.getData();
-			Bitmap bitmap = null;
-			AssetFileDescriptor fileDescriptor = null;
-			BitmapFactory.Options options = new BitmapFactory.Options();
-			options.inJustDecodeBounds = true;
-			try {
-				fileDescriptor = activity.getContentResolver().openAssetFileDescriptor(
-						selectedImage, "r");
-			} catch (FileNotFoundException e) {
+		// 选择照片
+		if (SHELECT_PHOTO_RESULT == requestCode && data != null && resultCode == Activity.RESULT_OK) {
+
+			Uri originalUri = data.getData(); // 获得图片的uri
+			SLBitmap bitmap = viewPhotoForUri(originalUri);
+			if (bitmap != null) {
+				photos.add(0, bitmap);
+				initPhotoBar();
 			}
-			bitmap = BitmapFactory.decodeFileDescriptor(fileDescriptor.getFileDescriptor(), null,
-					options);
-			// 获取这个图片的宽和高
-			float scaleWidth = options.outWidth * 1.0f / DrawAttribute.screenWidth;
-			float scaleHeight = options.outHeight * 1.0f / DrawAttribute.screenHeight;
-			float scale = scaleWidth > scaleHeight ? scaleWidth : scaleHeight;
-			if (scale < 1.0f) {
-				scale = 1.0f;
+		}
+		// 拍照
+		if (SHELECT_TAKE_PHOTO_RESULT == requestCode && resultCode == Activity.RESULT_OK) {
+
+			if (null == data) {
+				if (null != picPhotoUri) {
+
+				} else {
+					ToastUtils.showMessage("选择图片文件出错");
+					return;
+				}
 			}
-			options.inJustDecodeBounds = false;
-			options.inSampleSize = (int) scale;
-			bitmap = BitmapFactory.decodeFileDescriptor(fileDescriptor.getFileDescriptor(), null,
-					options);
-			try {
-				fileDescriptor.close();
-			} catch (IOException e) {
-			}
-			if (requestCode == 1 || requestCode == 3) {
-				drawView.setBackgroundBitmap(bitmap, false);
+			if (!StringUtil.isEmpty(picPath)) {
+				SLBitmap bitmap = doPhoto(picPath);
+
+				if (bitmap != null) {
+					photos.add(0, bitmap);
+					initPhotoBar();
+				}
 			} else {
-				drawView.addStickerBitmap(bitmap);
+				ToastUtils.showMessage("选择图片文件出错");
+			}
+		}
+
+	}
+
+	private void resultInitDraw(int resultCode, Intent data) {
+		if (resultCode == Activity.RESULT_OK) {
+			if (null != data && data.hasExtra(Constant.DATA)) {
+				DetailImages images = (DetailImages) data.getSerializableExtra(Constant.DATA);
+				filesList.add(images);
+				Bitmap bmp;
+				try {
+					bmp = BitmapHelp.getBitpMap(new File(images.getImageUrl()));
+					if (null != bmp) {
+						drawView.setBackgroundBitmap(bmp, false);
+						System.out.println("drawView:"+drawView);
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 	}
 
+	private void initPhotoBar() {
+		isCheckBitmap = false;
+		if (null == rightPhotoContentLayout_ly) {
+			return;
+		}
+		visible_Right_bt.setVisibility(View.VISIBLE);
+		rightPhotoContentLayout_ly.removeAllViews();
+		for (int i = 0; i < photos.size(); i++) {
+			ImageView imageView = new ImageView(activity);
+			imageView.setTag(photos.get(i));
+			LayoutParams params = new LayoutParams(60, 60);
+			imageView.setBackgroundDrawable(new BitmapDrawable(photos.get(i).bitmap));
+			rightPhotoContentLayout_ly.addView(imageView, params);
+			imageView.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					SLBitmap obj = (SLBitmap) v.getTag();
+					if (obj.isCheckEnable && !isCheckBitmap) {
+						isRightVisible = true;
+						visible_Right_bt.setVisibility(View.VISIBLE);
+						animate(rightPhotoToo_ly).setDuration(ANIM_TIME);
+						animate(rightPhotoToo_ly).x(BaseApplication.mWidth);
+						animate(visible_Right_bt).x(
+								BaseApplication.mWidth - visible_Right_bt.getWidth());
+						isCheckBitmap = true;
+						obj.isCheckEnable = false;
+						Bitmap bmp;
+						try {
+							bmp = BitmapHelp.getBitpMap(new File(obj.path));
+							if (null != bmp) {
+								drawView.addStickerBitmap(bmp);
+							}
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					} else if (!obj.isCheckEnable && isCheckBitmap) {
+						isCheckBitmap = false;
+						obj.isCheckEnable = true;
+						drawView.deleteStickerBitmap(null);
+					}
+					v.setTag(obj);
+				}
+			});
+		}
+
+	}
+
 	private void flawOperation() {
 		drawView.setBasicGeometry(null);
+	}
+
+	private void loadPhotos(int requestCode) {
+		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+		intent.addCategory(Intent.CATEGORY_OPENABLE);
+		intent.setType("image/*");
+		// intent.putExtra("crop", "true");
+		// intent.putExtra("aspectX", 1);
+		// intent.putExtra("aspectY", 1);
+		// intent.putExtra("outputX", 80);
+		// intent.putExtra("outputY", 80);
+		// intent.putExtra("return-data", true);
+		startActivityForResult(intent, requestCode);
 	}
 
 	// @Override
@@ -685,6 +637,50 @@ public class FraPublish extends BaseFragment {
 	// // startActivity(intent);
 	// ActDraw.this.finish();
 	// }
+
+	private static String photoPath = Constant.DRAW_PATH;
+	private String picPath;
+	private Uri picPhotoUri;
+
+	/**
+	 * 拍照获取图片
+	 */
+	private void takePhoto() {
+		// 执行拍照前，应该先判断SD卡是否存在
+		String SDState = Environment.getExternalStorageState();
+		if (SDState.equals(Environment.MEDIA_MOUNTED)) {
+
+			Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);// "android.media.action.IMAGE_CAPTURE"
+			/***
+			 * 需要说明一下，以下操作使用照相机拍照，拍照后的图片会存放在相册中的 这种方式有一个好处就是获取的图片是拍照后的原图 如果不实用ContentValues存放照片路径的话，拍照后获取的图片为缩略图不清晰
+			 */
+
+			/*
+			 * ContentValues values = new ContentValues(); photoUri =
+			 * this.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+			 * intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, photoUri); intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
+			 */
+			// 初始化
+			picPath = null;
+			// CramerProActivity.imageView.setImageBitmap(null);
+			String name = new DateFormat().format("yyyyMMdd_hhmmss",
+					Calendar.getInstance(Locale.CHINA))
+					+ ".jpg";
+			File file = new File(photoPath);
+			if (!file.exists()) {
+				// 检查图片存放的文件夹是否存在
+				file.mkdir();
+				// 不存在的话 创建文件夹
+			}
+			picPath = photoPath + "/" + name;
+			File photo = new File(picPath);
+			picPhotoUri = Uri.fromFile(photo);
+			intent.putExtra(MediaStore.EXTRA_OUTPUT, picPhotoUri); // 这样就将文件的存储方式和uri指定到了Camera应用中
+			FraPublish.this.startActivityForResult(intent, SHELECT_TAKE_PHOTO_RESULT);
+		} else {
+			ToastUtils.showMessage("内存卡不存在");
+		}
+	}
 
 	private void unbindDrawables(View view) {
 		if (view.getBackground() != null) {
@@ -697,7 +693,21 @@ public class FraPublish extends BaseFragment {
 			((ViewGroup) view).removeAllViews();
 		}
 	}
-	
-	
+
+	private class ViewRightBarTask extends AsyncTask<Void, Void, Void> {
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			System.out.println("doInBackground");
+			photos = viewPhoto();
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			super.onPostExecute(result);
+			initPhotoBar();
+		}
+	}
 
 }

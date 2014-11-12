@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawroot"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dip" >
+
+        <Button
+            android:id="@+id/drawundobtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="上一步" />
+
+        <Button
+            android:id="@+id/drawredobtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/drawundobtn"
+            android:text="下一步" />
+
+        <Button
+            android:id="@+id/finish"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="15dip"
+            android:text="完成" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+
+        <LinearLayout
+            android:id="@+id/drawmiddle"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_above="@+id/drawbottom"
+            android:orientation="horizontal" >
+
+            <com.givon.baseproject.xinlu.view.DrawView
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/drawview"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent" >
+            </com.givon.baseproject.xinlu.view.DrawView>
+        </LinearLayout>
+
+        <include layout="@layout/toolbarright" />
+
+        <ImageButton
+            android:id="@+id/visible_Right"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/drawright"
+            android:layout_width="40dip"
+            android:layout_height="40dip"
+            android:alpha="0"
+            android:background="@drawable/drawvisiblebtn" >
+        </ImageButton>
+
+        <LinearLayout
+            android:id="@+id/drawbottom"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical" >
+
+            <include layout="@layout/toolbarbottom" />
+        </LinearLayout>
+    </RelativeLayout>
+
+</LinearLayout>

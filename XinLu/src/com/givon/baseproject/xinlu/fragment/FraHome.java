@@ -154,6 +154,7 @@ public class FraHome extends BaseFragment implements ViewPageTopListener,OnClick
 				}
 			}
 		});
+		mRefreshableView.doRefresh();
 	}
 
 	@Override
@@ -164,7 +165,7 @@ public class FraHome extends BaseFragment implements ViewPageTopListener,OnClick
 
 	private void InitViewPager(View parentView) {
 		mPager = (MyViewPager) parentView.findViewById(R.id.vPager);
-
+		mPager.setOffscreenPageLimit(2);
 		final int w = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
 		final int h = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
 		ViewTreeObserver vto = mPager.getViewTreeObserver();
@@ -330,8 +331,12 @@ public class FraHome extends BaseFragment implements ViewPageTopListener,OnClick
 	@Override
 	public void onRefresh(RefreshableView view) {
 		//伪处理
-//				handler.sendEmptyMessageDelayed(1, 2000);
 		getBanner();
+		if(null!=home1){
+			((FraTuiJian)home1).initDataRefash();
+		}
+		
+		
 	}
 //	Handler handler = new Handler() {
 //		public void handleMessage(Message message) {

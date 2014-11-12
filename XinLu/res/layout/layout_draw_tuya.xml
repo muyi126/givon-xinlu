@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawroot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <include layout="@layout/layout_draw_titlbar" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <com.givon.baseproject.xinlu.view.DrawView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/drawview"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_above="@+id/drawbottom" >
+        </com.givon.baseproject.xinlu.view.DrawView>
+
+        <LinearLayout
+            android:id="@+id/drawbottom"
+            android:layout_width="fill_parent"
+            android:layout_height="60dp"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical" >
+            <TextView
+                android:layout_width="50dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="颜色" />
+
+            <com.givon.util.colorpicker.ColorPickerView
+                android:id="@+id/graphiccolorview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                 />
+        </LinearLayout>
+    </RelativeLayout>
+
+</LinearLayout>

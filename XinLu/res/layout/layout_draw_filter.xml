@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <include
+        android:id="@+id/ly_2"
+        layout="@layout/layout_draw_titlbar" />
+
+    <com.givon.baseproject.xinlu.view.DrawView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/drawview"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_below="@+id/ly_2"
+            android:layout_above="@+id/ly_1" >
+        </com.givon.baseproject.xinlu.view.DrawView>
+         <TextView
+            android:id="@+id/runtime"
+            android:layout_below="@+id/ly_2"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:text="图片渲染中......"
+            android:textColor="#666666"
+            android:textSize="14dip"
+            android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/ly_1"
+        android:layout_width="fill_parent"
+        android:layout_height="60dip"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:visibility="visible" >
+
+
+        <Gallery
+            android:id="@+id/galleryFilter"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:spacing="2px" />
+    </LinearLayout>
+
+</RelativeLayout>

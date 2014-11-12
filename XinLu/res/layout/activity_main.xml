@@ -16,7 +16,7 @@
         android:id="@+id/rg_tab"
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dip"
         android:layout_gravity="bottom"
         android:gravity="center"
         android:background="@drawable/bg_weibo_listab">

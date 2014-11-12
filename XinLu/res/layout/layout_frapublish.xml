@@ -36,64 +36,32 @@
         android:layout_height="0dp"
         android:layout_weight="1" >
 
-        <LinearLayout
-            android:id="@+id/drawmiddle"
+        <com.givon.baseproject.xinlu.view.DrawView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/drawview"
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
-            android:orientation="horizontal" >
-
-            <com.givon.baseproject.xinlu.view.DrawView
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/drawview"
-                android:layout_width="match_parent"
-                android:layout_height="fill_parent" >
-            </com.givon.baseproject.xinlu.view.DrawView>
-        </LinearLayout>
+            android:layout_above="@+id/drawbottom" >
+        </com.givon.baseproject.xinlu.view.DrawView>
 
         <include layout="@layout/toolbarright" />
 
+        <ImageButton
+            android:id="@+id/visible_Right"
+            android:layout_width="40dip"
+            android:layout_height="40dip"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/drawright"
+            android:alpha="0"
+            android:background="@drawable/drawvisiblebtn" >
+        </ImageButton>
+
         <LinearLayout
             android:id="@+id/drawbottom"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:orientation="vertical" >
-
-            <FrameLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:background="@drawable/drawbottombar" >
-
-                <!--
-                <include layout="@layout/markerpic" />
-
-                <include layout="@layout/crayonpic" />
-
-                <include layout="@layout/colorpic" />
-
-                <include layout="@layout/stamppenpic" />
-
-                
-
-                <include layout="@layout/eraserpic" />
-
-                <include layout="@layout/stickerpic" />
-                -->
-
-                <include layout="@layout/geometrypic" />
-
-                <include layout="@layout/tuyapic" />
-
-                <include layout="@layout/backgroundpic" />
-
-                <include layout="@layout/stickerpic" />
-                <!--
-                <include layout="@layout/picpic" />
-
-                <include layout="@layout/wordpic" />
-                -->
-            </FrameLayout>
 
             <include layout="@layout/toolbarbottom" />
         </LinearLayout>

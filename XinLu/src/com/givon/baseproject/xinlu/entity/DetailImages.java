@@ -12,7 +12,7 @@ package com.givon.baseproject.xinlu.entity;
 
 import java.io.Serializable;
 
-public class DetailImages implements Serializable{
+public class DetailImages implements Serializable,Cloneable{
 	private static final long serialVersionUID = 1L;
 	private String imageUrl;//": "",//图片网络地址
     private int widthSize;//": "",//图片宽度

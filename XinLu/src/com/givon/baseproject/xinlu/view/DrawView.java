@@ -10,6 +10,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -54,6 +55,9 @@ public class DrawView extends View implements Runnable {
 	private boolean isCanDraw = false;
 	private FraPublish fraPublish;
 
+	private int mHeight;
+	private int mWidth;
+
 	public DrawView(Context context, AttributeSet attributeSet) {
 		super(context, attributeSet);
 		this.context = context;
@@ -62,10 +66,17 @@ public class DrawView extends View implements Runnable {
 	}
 
 	public void initView() {
+		System.out.println("initView");
 		backgroundBitmap = DrawAttribute.getImageFromAssetsFile(context, "bigpaper00.jpg", true);
 		backgroundBitmapLeftTopP = new PointF(0, 0);
-		paintBitmap = Bitmap.createBitmap(DrawAttribute.screenWidth, DrawAttribute.screenHeight,
-				Bitmap.Config.ARGB_8888);
+		if (mHeight != 0 && mWidth != 0) {
+			paintBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
+		} else {
+			paintBitmap = Bitmap.createBitmap(DrawAttribute.screenWidth_out,
+					DrawAttribute.screenHeight_out, Bitmap.Config.ARGB_8888);
+		}
+		System.out.println("w:" + DrawAttribute.screenWidth_out + " h"
+				+ DrawAttribute.screenHeight_out);
 		paintCanvas = new Canvas(paintBitmap);
 		paintCanvas.drawARGB(0, 255, 255, 255);
 		stickerBitmapList = new StickerBitmapList(this);
@@ -79,6 +90,18 @@ public class DrawView extends View implements Runnable {
 		brushGestureDetector = new GestureDetector(brushGestureListener);
 	}
 
+	@Override
+	protected void onVisibilityChanged(View changedView, int visibility) {
+		super.onVisibilityChanged(changedView, visibility);
+		// if (mHeight == 0 || mWidth == 0) {
+		// mHeight = getHeight();
+		// mWidth = getWidth();
+		// initView();
+		// }
+		System.out.println("h:" + getHeight());
+		System.out.println("w:" + getWidth());
+	}
+
 	public FraPublish getFraPublish() {
 		return fraPublish;
 	}
@@ -89,11 +112,14 @@ public class DrawView extends View implements Runnable {
 
 	@Override
 	protected void onDraw(Canvas canvas) {
+		System.out.println("Ondraw");
 		super.onDraw(canvas);
 		canvas.drawColor(Color.WHITE);
 		canvas.drawBitmap(backgroundBitmap, backgroundBitmapLeftTopP.x, backgroundBitmapLeftTopP.y,
 				null);
-		canvas.drawBitmap(paintBitmap, 0, 0, null);
+		if (null != paintBitmap) {
+			canvas.drawBitmap(paintBitmap, 0, 0, null);
+		}
 		if (basicGeometry != null) {
 			basicGeometry.drawGraphic(canvas);
 		}
@@ -139,11 +165,11 @@ public class DrawView extends View implements Runnable {
 				return true;// 点击了Text贴图的工具
 			case 2:
 				touchLayer = TouchLayer.STICKER_TEXT;
-				if(stickerBitmapListByTT.isTouchEditText()){
+				if (stickerBitmapListByTT.isTouchEditText()) {
 					System.out.println("EEEEEE");
 					setEditTextVisible(true);
 				}
-				
+
 				break;// 点击了Text贴图
 			case -1:
 				if (basicGeometry != null
@@ -156,7 +182,7 @@ public class DrawView extends View implements Runnable {
 				}
 			}
 		}
-		if(touchLayer != TouchLayer.STICKER_TEXT){
+		if (touchLayer != TouchLayer.STICKER_TEXT) {
 			setEditTextVisible(false);
 		}
 		// 绘图层的监听
@@ -181,16 +207,17 @@ public class DrawView extends View implements Runnable {
 		return true;
 	}
 
-	public void setEditTextVisibleStucker(boolean isVisible){
+	public void setEditTextVisibleStucker(boolean isVisible) {
 		stickerBitmapListByTT.setTouchEditText(isVisible);
 	}
-	
-	public void setEditTextVisible(boolean isVisible){
+
+	public void setEditTextVisible(boolean isVisible) {
 		if (null != fraPublish) {
 		} else {
 			((BaseActivity) context).setEditViewVisible(isVisible);
 		}
 	}
+
 	// private boolean isClickOnVisibleBtn(float x, float y) {
 	// if (x > DrawAttribute.screenWidth - VISIBLE_BTN_WIDTH && x < DrawAttribute.screenWidth
 	// && y < VISIBLE_BTN_HEIGHT) {
@@ -219,13 +246,26 @@ public class DrawView extends View implements Runnable {
 		}
 	}
 
-	public void setBackgroundBitmap(Bitmap bitmap, boolean isFromSystem) {
+	public Bitmap setBackgroundBitmap(Bitmap bitmap, boolean isFromSystem) {
 		if (isFromSystem) {
 			backgroundBitmap = bitmap;
 			backgroundBitmapLeftTopP.set(0, 0);
+			return bitmap;
 		} else {
-			float scaleWidth = bitmap.getWidth() * 1.0f / DrawAttribute.screenWidth;
-			float scaleHeight = bitmap.getHeight() * 1.0f / DrawAttribute.screenHeight;
+			float scaleWidth;
+			float scaleHeight;
+
+			// if (mWidth != 0 && mHeight != 0) {
+			//
+			// scaleWidth = bitmap.getWidth() * 1.0f / mWidth;
+			// scaleHeight = bitmap.getHeight() * 1.0f / mHeight;
+			// } else {
+			// scaleWidth = bitmap.getWidth() * 1.0f / DrawAttribute.screenWidth;
+			// scaleHeight = bitmap.getHeight() * 1.0f / DrawAttribute.screenHeight;
+			//
+			// }
+			scaleWidth = bitmap.getWidth() * 1.0f / DrawAttribute.screenWidth_out;
+			scaleHeight = bitmap.getHeight() * 1.0f / DrawAttribute.screenHeight_out;
 			float scale = scaleWidth > scaleHeight ? scaleWidth : scaleHeight;
 			if (scale > 1.01)
 				backgroundBitmap = Bitmap.createScaledBitmap(bitmap,
@@ -234,8 +274,22 @@ public class DrawView extends View implements Runnable {
 			else {
 				backgroundBitmap = bitmap;
 			}
-			backgroundBitmapLeftTopP.x = (DrawAttribute.screenWidth - backgroundBitmap.getWidth()) / 2;
-			backgroundBitmapLeftTopP.y = (DrawAttribute.screenHeight - backgroundBitmap.getHeight()) / 2;
+			// if (mWidth != 0 && mHeight != 0) {
+			//
+			// backgroundBitmapLeftTopP.x = (mWidth - backgroundBitmap.getWidth()) / 2;
+			// backgroundBitmapLeftTopP.y = (mHeight - backgroundBitmap.getHeight()) / 2;
+			// } else {
+			//
+			// backgroundBitmapLeftTopP.x = (DrawAttribute.screenWidth - backgroundBitmap
+			// .getWidth()) / 2;
+			// backgroundBitmapLeftTopP.y = (DrawAttribute.screenHeight - backgroundBitmap
+			// .getHeight()) / 2;
+			// }
+			backgroundBitmapLeftTopP.x = (DrawAttribute.screenWidth_out - backgroundBitmap
+					.getWidth()) / 2;
+			backgroundBitmapLeftTopP.y = (DrawAttribute.screenHeight_out - backgroundBitmap
+					.getHeight()) / 2;
+			return bitmap;
 
 		}
 	}
@@ -285,7 +339,7 @@ public class DrawView extends View implements Runnable {
 		// 增加贴图s
 		stickerBitmapListByTT.setIsStickerToolsDraw(false, null);
 		if (!stickerBitmapListByTT.addStickerBitmap(new TextViewStickerBitmap(this,
-				stickerBitmapListByTT,paint, content))) {
+				stickerBitmapListByTT, paint, content))) {
 			// (new StickerBitmap(this, stickerBitmapList, bitmap))) {
 			Toast.makeText(context, "贴图太多了！", Toast.LENGTH_SHORT).show();
 		}
@@ -335,47 +389,49 @@ public class DrawView extends View implements Runnable {
 	 */
 	public void setBrushBitmap(DrawAttribute.DrawStatus drawStatus, int extraData) {
 		this.drawStatus = drawStatus;
-		Bitmap brushBitmap;
-		int brushDistance;
-		Paint brushPaint;
+		Bitmap brushBitmap = null;
+		int brushDistance = 0;
+		Paint brushPaint = null;
 		// 水彩笔颜色
 		if (drawStatus == DrawAttribute.DrawStatus.CASUAL_WATER) {
 			brushBitmap = casualStroke(R.drawable.marker, extraData);
 			brushDistance = 1;
 			brushPaint = null;
-		} else if (drawStatus == DrawAttribute.DrawStatus.CASUAL_CRAYON) {
-			brushBitmap = casualStroke(R.drawable.crayon, extraData);
-			brushDistance = brushBitmap.getWidth() / 2;
-			brushPaint = null;
-		} else if (drawStatus == DrawAttribute.DrawStatus.CASUAL_COLOR_SMALL) {
-			brushBitmap = casualStroke(R.drawable.paintcopy, extraData);
-			brushDistance = 3;
-			brushPaint = null;
-		} else if (drawStatus == DrawAttribute.DrawStatus.CASUAL_COLOR_BIG) {
-			brushBitmap = casualStroke(R.drawable.paint, extraData);
-			brushDistance = 2;
-			brushPaint = null;
-		} else // if(drawStatus == DrawAttribute.DrawStatus.ERASER)
-		{
-			brushPaint = new Paint();
-			brushPaint.setFilterBitmap(true);
-			brushPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
-			switch (extraData) {
-			case 0:
-				brushBitmap = ((BitmapDrawable) this.getResources().getDrawable(R.drawable.eraser))
-						.getBitmap();
-				break;
-			case 1:
-				brushBitmap = ((BitmapDrawable) this.getResources().getDrawable(R.drawable.eraser1))
-						.getBitmap();
-				break;
-			default:
-				brushBitmap = ((BitmapDrawable) this.getResources().getDrawable(R.drawable.eraser2))
-						.getBitmap();
-				break;
-			}
-			brushDistance = brushBitmap.getWidth() / 4;
 		}
+		// else if (drawStatus == DrawAttribute.DrawStatus.CASUAL_CRAYON) {
+		// brushBitmap = casualStroke(R.drawable.crayon, extraData);
+		// brushDistance = brushBitmap.getWidth() / 2;
+		// brushPaint = null;
+		// } else if (drawStatus == DrawAttribute.DrawStatus.CASUAL_COLOR_SMALL) {
+		// brushBitmap = casualStroke(R.drawable.paintcopy, extraData);
+		// brushDistance = 3;
+		// brushPaint = null;
+		// } else if (drawStatus == DrawAttribute.DrawStatus.CASUAL_COLOR_BIG) {
+		// brushBitmap = casualStroke(R.drawable.paint, extraData);
+		// brushDistance = 2;
+		// brushPaint = null;
+		// }
+		// else // if(drawStatus == DrawAttribute.DrawStatus.ERASER)
+		// {
+		// brushPaint = new Paint();
+		// brushPaint.setFilterBitmap(true);
+		// brushPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
+		// switch (extraData) {
+		// case 0:
+		// brushBitmap = ((BitmapDrawable) this.getResources().getDrawable(R.drawable.eraser))
+		// .getBitmap();
+		// break;
+		// case 1:
+		// brushBitmap = ((BitmapDrawable) this.getResources().getDrawable(R.drawable.eraser1))
+		// .getBitmap();
+		// break;
+		// default:
+		// brushBitmap = ((BitmapDrawable) this.getResources().getDrawable(R.drawable.eraser2))
+		// .getBitmap();
+		// break;
+		// }
+		// brushDistance = brushBitmap.getWidth() / 4;
+		// }
 		brushGestureListener.setBrush(brushBitmap, brushDistance, brushPaint);
 	}
 
@@ -501,6 +557,19 @@ public class DrawView extends View implements Runnable {
 		}
 	}
 
+//	@Override
+//	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+//		super.onSizeChanged(w, h, oldw, oldh);
+//		
+//		if(){
+//			
+//		}
+//		System.out.println("D_w:" + getWidth());
+//		System.out.println("D_H:" + getHeight());
+//		System.out.println("W:" + DrawAttribute.screenWidth_out);
+//		System.out.println("H:" + DrawAttribute.screenHeight_out);
+//	}
+
 	public DetailImages saveBitmap() {
 		return saveBitmap(false);
 	}
@@ -511,8 +580,14 @@ public class DrawView extends View implements Runnable {
 			bitmap = Bitmap.createBitmap(DrawAttribute.screenWidth_out,
 					DrawAttribute.screenHeight_out, Bitmap.Config.ARGB_8888);
 		} else {
-			bitmap = Bitmap.createBitmap(DrawAttribute.screenWidth, DrawAttribute.screenHeight,
-					Bitmap.Config.ARGB_8888);
+			// if (mHeight != 0 && mWidth != 0) {
+			// bitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
+			// } else {
+			// bitmap = Bitmap.createBitmap(DrawAttribute.screenWidth, DrawAttribute.screenHeight,
+			// Bitmap.Config.ARGB_8888);
+			// }
+			bitmap = Bitmap.createBitmap(DrawAttribute.screenWidth_out,
+					DrawAttribute.screenHeight_out, Bitmap.Config.ARGB_8888);
 
 		}
 
@@ -520,7 +595,9 @@ public class DrawView extends View implements Runnable {
 		canvas.drawColor(Color.WHITE);
 		canvas.drawBitmap(backgroundBitmap, backgroundBitmapLeftTopP.x, backgroundBitmapLeftTopP.y,
 				null);
-		canvas.drawBitmap(paintBitmap, 0, 0, null);
+		if (null != paintBitmap && !paintBitmap.isRecycled()) {
+			canvas.drawBitmap(paintBitmap, 0, 0, null);
+		}
 		if (basicGeometry != null) {
 			basicGeometry.drawGraphic(canvas);
 		}
@@ -528,14 +605,26 @@ public class DrawView extends View implements Runnable {
 		stickerBitmapListByTT.setStickerToolsDraw(false);
 		stickerBitmapList.drawStickerBitmapList(canvas);
 		stickerBitmapListByTT.drawStickerBitmapList(canvas);
+		stickerBitmapList.deleteOnTouchStickerBitmap();
+		stickerBitmapListByTT.deleteOnTouchStickerBitmap();
+		setBackgroundBitmap(bitmap, false);
 		return StorageInSDCard.saveBitmapInExternalStorage(bitmap, context);
 	}
 
 	public void freeBitmaps() {
 		backgroundBitmap.recycle();
-		paintBitmap.recycle();
+		if (null != paintBitmap) {
+			paintBitmap.recycle();
+		}
+		paintBitmap = null;
 		stickerBitmapList.freeBitmaps();
 		stickerBitmapListByTT.freeBitmaps();
 		// undoAndRedo.freeBitmaps();
+	}
+
+	public void freeBitmaps2() {
+		paintBitmap.recycle();
+		stickerBitmapList.freeBitmaps();
+		stickerBitmapListByTT.freeBitmaps();
 	}
 }

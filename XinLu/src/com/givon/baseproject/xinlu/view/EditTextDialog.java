@@ -71,6 +71,7 @@ public class EditTextDialog extends Dialog {
 					String content = et_Content.getText().toString().trim();
 					if(!StringUtil.isEmpty(content)){
 						onEditTextOnClickListener.onClickSure(content);
+						dismiss();
 					}else {
 						ToastUtils.showMessage("内容不能为空");
 					}

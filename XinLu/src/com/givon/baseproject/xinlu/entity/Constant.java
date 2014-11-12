@@ -10,6 +10,8 @@
 
 package com.givon.baseproject.xinlu.entity;
 
+import android.os.Environment;
+
 public class Constant {
 
 	public static final String ACTION_EXIT_SYSTEM = "action_exit_system";
@@ -31,5 +33,9 @@ public class Constant {
 	public static final String APP_TOKEN = "app_token";
 	public static final String IS_LOGIN_AUTH = "is_login";
 	public static final String DATA = "_data";
+	public static final String LUYIN_PATH = Environment.getExternalStorageDirectory().getPath() +"/ZuJi/luyin";
+	public static final String DRAW_PATH = Environment.getExternalStorageDirectory().getPath() +"/ZuJi/drawpics";
+	public static final String Main_PATH = Environment.getExternalStorageDirectory().getPath() +"/ZuJi";
+	public static final String BAIDU_AC = "SNcsshCnGIVowV2AEIGLdPNp";
 
 }

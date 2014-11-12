@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -96,10 +97,17 @@ public class MainActivity extends BaseFragmentActivity {
 		}
 	}
     
+    
+    @Override
+    protected void onActivityResult(int arg0, int arg1, Intent arg2) {
+    	super.onActivityResult(arg0, arg1, arg2);
+    }
     @Override
     protected void onDestroy() {
     	FraPublish fragment=(FraPublish) mFragmentMap.get(FraPublish.class.getSimpleName());
-    	fragment.onDestroy();
+    	if(null!=fragment){
+    		fragment.onDestroy();
+    	}
     	super.onDestroy();
     }
 

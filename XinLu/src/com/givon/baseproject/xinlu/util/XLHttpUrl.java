@@ -11,6 +11,7 @@
 package com.givon.baseproject.xinlu.util;
 
 public class XLHttpUrl {
+	public static final int PAGE_SIZE=15;
 	public static final String CONTENT_TYPE = "application/json";
 	public static String Main_Url = "http://192.168.1.108:8080/FootprintService";
 //	public static String Main_Url = "http://192.168.1.116:8080/FootprintService";
@@ -21,6 +22,8 @@ public class XLHttpUrl {
 	public static String Register = "/LoginRegister/Register";
 	public static String GetBanners = "/Index/GetBanners";
 	public static String SaveTravel = "/Index/SaveTravel";
+	public static String GetBackgroundMusic = "/Index/GetBackgroundMusic";
+	public static String GetTravels = "/Index/GetTravels";
 	
 
 }

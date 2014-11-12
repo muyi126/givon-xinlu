@@ -22,7 +22,10 @@ public class DrawAttribute {
 	public static int screenHeight;
 	public static int screenWidth;
 	public static int screenHeight_out = 1008;
-	public static int screenWidth_out = 600;
+	public static int screenWidth_out = 640;
+	public static int screenHeight_out_2 = 1008;
+	public static int screenWidth_out_2 = 640;
+	public static float screenWidthSclHeight = 640f/1008f;
 	public static Paint paint = new Paint();
 		
 	public static Bitmap getImageFromAssetsFile(Context context,String fileName,boolean isBackground)

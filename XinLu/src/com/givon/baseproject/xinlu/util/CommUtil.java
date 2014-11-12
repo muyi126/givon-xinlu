@@ -22,6 +22,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import com.givon.baseproject.xinlu.BaseApplication;
 import com.givon.baseproject.xinlu.act.MainActivity;
 
 public class CommUtil {
@@ -65,79 +66,77 @@ public class CommUtil {
 	/**
 	 * 根据手机的分辨率从 dp 的单位 转成为 px(像素)
 	 */
-	public static int dip2px(Context context, float dpValue) {
-		final float scale = context.getResources().getDisplayMetrics().density;
+	public static int dip2px(float dpValue) {
+		final float scale = BaseApplication.getInstance().getResources().getDisplayMetrics().density;
 		return (int) (dpValue * scale + 0.5f);
 	}
 
 	/**
 	 * 根据手机的分辨率从 px(像素) 的单位 转成为 dp
 	 */
-	public static int px2dip(Context context, float pxValue) {
-		final float scale = context.getResources().getDisplayMetrics().density;
+	public static int px2dip(float pxValue) {
+		final float scale = BaseApplication.getInstance().getResources().getDisplayMetrics().density;
 		return (int) (pxValue / scale + 0.5f);
 	}
 	
-//	public static Bitmap loadImageFromUrl(String url, int sc)
-//    {
-//
-//        URL m;
-//        InputStream i = null;
-//        BufferedInputStream bis = null;
-//        ByteArrayOutputStream out = null;
-//
-//        if (url == null)
-//            return null;
-//        try
-//        {
-//            m = new URL(url);
-//            i = (InputStream) m.getContent();
-//            bis = new BufferedInputStream(i, 1024 * 4);
-//            out = new ByteArrayOutputStream();
-//            int len = 0;
-//
-//            while ((len = bis.read(isBuffer)) != -1)
-//            {
-//                out.write(isBuffer, 0, len);
-//            }
-//            out.close();
-//            bis.close();
-//        } catch (MalformedURLException e1)
-//        {
-//            e1.printStackTrace();
-//            return null;
-//        } catch (IOException e)
-//        {
-//            e.printStackTrace();
-//        }
-//        if (out == null)
-//            return null;
-//        byte[] data = out.toByteArray();
-//        BitmapFactory.Options options = new BitmapFactory.Options();
-//        options.inJustDecodeBounds = true;
-//        BitmapFactory.decodeByteArray(data, 0, data.length, options);
-//        options.inJustDecodeBounds = false;
-//        int be = (int) (options.outHeight / (float) sc);
-//        if (be <= 0)
-//        {
-//            be = 1;
-//        } else if (be > 3)
-//        {
-//            be = 3;
-//        }
-//        options.inSampleSize = be;
-//        Bitmap bmp =null;
-//        try
-//        {
-//            bmp = BitmapFactory.decodeByteArray(data, 0, data.length, options); //返回缩略图
-//        } catch (OutOfMemoryError e)
-//        {
-//            // TODO: handle exception
-//            ToastUtils.showMessage("Tile Loader (241) Out Of Memory Error " + e.getLocalizedMessage())
-//        
-//            System.gc();
-//            bmp =null;
-//        }
-//        return bmp;
-//    }
+	/**
+	 * 检测Sdcard是否存在
+	 * 
+	 * @return
+	 */
+	public static boolean isExitsSdcard() {
+		if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED))
+			return true;
+		else
+			return false;
+	}
+	
+	public static Bitmap createImageThumbnail(String filePath){  
+	     Bitmap bitmap = null;  
+	     BitmapFactory.Options opts = new BitmapFactory.Options();  
+	     opts.inJustDecodeBounds = true;  
+	     BitmapFactory.decodeFile(filePath, opts);  
+	  
+	     opts.inSampleSize = computeSampleSize(opts, -1, 128*128);  
+	     opts.inJustDecodeBounds = false;  
+	  
+	     try {  
+	         bitmap = BitmapFactory.decodeFile(filePath, opts);  
+	     }catch (Exception e) {  
+	        // TODO: handle exception  
+	    }  
+	    return bitmap;  
+	}  
+	  
+	public static int computeSampleSize(BitmapFactory.Options options, int minSideLength, int maxNumOfPixels) {  
+	    int initialSize = computeInitialSampleSize(options, minSideLength, maxNumOfPixels);  
+	    int roundedSize;  
+	    if (initialSize <= 8) {  
+	        roundedSize = 1;  
+	        while (roundedSize < initialSize) {  
+	            roundedSize <<= 1;  
+	        }  
+	    } else {  
+	        roundedSize = (initialSize + 7) / 8 * 8;  
+	    }  
+	    return roundedSize;  
+	}  
+	  
+	private static int computeInitialSampleSize(BitmapFactory.Options options,int minSideLength, int maxNumOfPixels) {  
+	    double w = options.outWidth;  
+	    double h = options.outHeight;  
+	    int lowerBound = (maxNumOfPixels == -1) ? 1 : (int) Math.ceil(Math.sqrt(w * h / maxNumOfPixels));  
+	    int upperBound = (minSideLength == -1) ? 128 :(int) Math.min(Math.floor(w / minSideLength), Math.floor(h / minSideLength));  
+	    if (upperBound < lowerBound) {  
+	        // return the larger one when there is no overlapping zone.  
+	        return lowerBound;  
+	    }  
+	    if ((maxNumOfPixels == -1) && (minSideLength == -1)) {  
+	        return 1;  
+	    } else if (minSideLength == -1) {  
+	        return lowerBound;  
+	    } else {  
+	        return upperBound;  
+	    }  
+	}  
 }

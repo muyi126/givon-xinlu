@@ -206,7 +206,7 @@ public class RoundImageView extends ImageView {
 
 		}
 		if (null == roundBitmap) {
-			Bitmap bitmap = b.copy(Bitmap.Config.ARGB_8888, true);
+			Bitmap bitmap = b.copy(Bitmap.Config.ARGB_4444, true);
 			roundBitmap = getCroppedRoundBitmap(bitmap, radius);
 		} else {
 		}
@@ -310,11 +310,11 @@ public class RoundImageView extends ImageView {
 
 		// bitmap回收(recycle导致在布局文件XML看不到效果)
 
-		// bmp.recycle();
+		 bmp.recycle();
 
-		// squareBitmap.recycle();
+		 squareBitmap.recycle();
 
-		// scaledSrcBmp.recycle();
+		 scaledSrcBmp.recycle();
 
 		bmp = null;
 
@@ -358,7 +358,9 @@ public class RoundImageView extends ImageView {
 	}
 	
 	public void cleanbitmap() {
-		roundBitmap = null;
+		if(roundBitmap!=null){
+			roundBitmap.recycle();
+		}
 	}
 
 }
