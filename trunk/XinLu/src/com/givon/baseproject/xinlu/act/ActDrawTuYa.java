@@ -1,6 +1,6 @@
 /* 
- * Copyright 2014 ShangDao.Ltd  All rights reserved.
- * SiChuan ShangDao.Ltd PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright 2014 JiaJun.Ltd  All rights reserved.
+ * SiChuan JiaJun.Ltd PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  * 
  * @ActDrawTuYa.java  2014年11月2日 下午3:23:55 - Guzhu
  * @author Guzhu
@@ -22,7 +22,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.LinearLayout;
 
 import com.givon.baseproject.draw.util.TuYaUtil;
 import com.givon.baseproject.xinlu.BaseActivity;
@@ -31,6 +30,7 @@ import com.givon.baseproject.xinlu.entity.Constant;
 import com.givon.baseproject.xinlu.entity.DetailImages;
 import com.givon.baseproject.xinlu.util.BitmapHelp;
 import com.givon.baseproject.xinlu.view.DrawView;
+import com.givon.baseproject.xinlu.view.DrawView.ReloadingListener;
 
 public class ActDrawTuYa extends BaseActivity implements OnClickListener{
 	
@@ -48,20 +48,27 @@ public class ActDrawTuYa extends BaseActivity implements OnClickListener{
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		initView();
 		drawView.setCanDraw(true);
-		Intent intent = getIntent();
-		if (intent.hasExtra(Constant.DATA)) {
-			images = (DetailImages) intent.getSerializableExtra(Constant.DATA);
-			Bitmap bmp;
-			try {
-				bmp = BitmapHelp.getBitpMap(new File(images.getImageUrl()));
-				if (null != bmp) {
-					drawView.setBackgroundBitmap(bmp, false);
+		drawView.setReloadingListener(new ReloadingListener() {
+			
+			@Override
+			public void onReLoding() {
+				Intent intent = getIntent();
+				if (intent.hasExtra(Constant.DATA)) {
+					images = (DetailImages) intent.getSerializableExtra(Constant.DATA);
+					Bitmap bmp;
+					try {
+						bmp = BitmapHelp.getBitpMap(new File(images.getImageUrl()));
+						if (null != bmp) {
+							drawView.setBackgroundBitmap(bmp, false);
+						}
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
-		}
+		});
+		
 
 	}
 

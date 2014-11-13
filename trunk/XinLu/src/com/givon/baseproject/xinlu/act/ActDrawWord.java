@@ -1,6 +1,6 @@
 /* 
- * Copyright 2014 ShangDao.Ltd  All rights reserved.
- * SiChuan ShangDao.Ltd PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright 2014 JiaJun.Ltd  All rights reserved.
+ * SiChuan JiaJun.Ltd PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  * 
  * @ActDrawWord.java  2014年11月2日 下午3:22:53 - Guzhu
  * @author Guzhu
@@ -35,8 +35,8 @@ import com.givon.baseproject.xinlu.R;
 import com.givon.baseproject.xinlu.entity.Constant;
 import com.givon.baseproject.xinlu.entity.DetailImages;
 import com.givon.baseproject.xinlu.util.BitmapHelp;
-import com.givon.baseproject.xinlu.util.ToastUtils;
 import com.givon.baseproject.xinlu.view.DrawView;
+import com.givon.baseproject.xinlu.view.DrawView.ReloadingListener;
 import com.givon.baseproject.xinlu.view.EditTextDialog;
 import com.givon.baseproject.xinlu.view.EditTextDialog.OnEditTextOnClickListener;
 
@@ -56,30 +56,44 @@ public class ActDrawWord extends BaseActivity implements OnClickListener {
 	// private LinearLayout mEditLayout;
 
 	@Override
+	public void onAttachedToWindow() {
+		super.onAttachedToWindow();
+		System.out.println("onAttachedToWindow");
+	}
+	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
+		System.out.println("onCreate");
 		setContentView(R.layout.layout_draw_word);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		initView();
-		drawView.addStickerBitmapTT("点击我编辑",
-				graphicUtil.GetTextPaintClass(GeometryUtil.TextType.SONG));
-		Intent intent = getIntent();
-		if (intent.hasExtra(Constant.DATA)) {
-			images = (DetailImages) intent.getSerializableExtra(Constant.DATA);
-			Bitmap bmp;
-			try {
-				bmp = BitmapHelp.getBitpMap(new File(images.getImageUrl()));
-				System.out.println("images.getImageUrl():"+images.getImageUrl());
-				if (null != bmp) {
-					drawView.setBackgroundBitmap(bmp, false);
+		drawView.setReloadingListener(new ReloadingListener() {
+			@Override
+			public void onReLoding() {
+				Intent intent = getIntent();
+				if (intent.hasExtra(Constant.DATA)) {
+					images = (DetailImages) intent.getSerializableExtra(Constant.DATA);
+					Bitmap bmp;
+					try {
+						bmp = BitmapHelp.getBitpMap(new File(images.getImageUrl()));
+						System.out.println("images.getImageUrl():" + images.getImageUrl() + bmp);
+						if (null != bmp) {
+							drawView.setBackgroundBitmap(bmp, false);
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					drawView.addStickerBitmapTT("点击我编辑",
+							graphicUtil.GetTextPaintClass(GeometryUtil.TextType.SONG));
 				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
-		}
+		});
+	}
 
+	@Override
+	protected void onStart() {
+		super.onStart();
 	}
 
 	private void initView() {
@@ -179,7 +193,7 @@ public class ActDrawWord extends BaseActivity implements OnClickListener {
 				drawView.editStickerBitmapTT_now(
 						graphicUtil.GetTextPaintClass(GeometryUtil.TextType.SONG), string);
 				drawView.setEditTextVisibleStucker(false);
-				
+
 			}
 
 			@Override

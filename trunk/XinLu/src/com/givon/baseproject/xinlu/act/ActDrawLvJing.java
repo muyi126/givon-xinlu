@@ -1,6 +1,6 @@
 /* 
- * Copyright 2014 ShangDao.Ltd  All rights reserved.
- * SiChuan ShangDao.Ltd PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright 2014 JiaJun.Ltd  All rights reserved.
+ * SiChuan JiaJun.Ltd PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  * 
  * @ActDrawLvJing.java  2014年11月2日 下午3:25:01 - Guzhu
  * @author Guzhu
@@ -38,28 +38,23 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Gallery;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.baidu.location.t;
 import com.givon.baseproject.xinlu.BaseActivity;
-import com.givon.baseproject.xinlu.BaseAdapter;
 import com.givon.baseproject.xinlu.R;
 import com.givon.baseproject.xinlu.entity.Constant;
 import com.givon.baseproject.xinlu.entity.DetailImages;
 import com.givon.baseproject.xinlu.util.BitmapHelp;
 import com.givon.baseproject.xinlu.view.DrawView;
-import com.lidroid.xutils.ViewUtils;
-import com.lidroid.xutils.view.annotation.ViewInject;
+import com.givon.baseproject.xinlu.view.DrawView.ReloadingListener;
 
 public class ActDrawLvJing extends BaseActivity implements OnClickListener {
 	private DrawView drawView;
@@ -78,25 +73,31 @@ public class ActDrawLvJing extends BaseActivity implements OnClickListener {
 		cancelButton.setOnClickListener(this);
 		drawView = (DrawView) findViewById(R.id.drawview);
 		textView = (TextView) findViewById(R.id.runtime);
-		Intent intent = getIntent();
-		if (intent.hasExtra(Constant.DATA)) {
-			// 注：在android系统上，手机图片尺寸尽量控制在480*480范围内,否则在高斯运算时可以造成内存溢出的问题
-			if (intent.hasExtra(Constant.DATA)) {
-				images = (DetailImages) intent.getSerializableExtra(Constant.DATA);
-				Bitmap bmp;
-				try {
-					bmp = BitmapHelp.getBitpMap(new File(images.getImageUrl()));
-					if (null != bmp) {
-						// drawView.setBackgroundBitmap(bmp, false);
-						drawView.setBackgroundBitmap(bmp, false);
-						LoadImageFilter();
+		drawView.setReloadingListener(new ReloadingListener() {
+			
+			@Override
+			public void onReLoding() {
+				Intent intent = getIntent();
+				if (intent.hasExtra(Constant.DATA)) {
+					// 注：在android系统上，手机图片尺寸尽量控制在480*480范围内,否则在高斯运算时可以造成内存溢出的问题
+					if (intent.hasExtra(Constant.DATA)) {
+						images = (DetailImages) intent.getSerializableExtra(Constant.DATA);
+						Bitmap bmp;
+						try {
+							bmp = BitmapHelp.getBitpMap(new File(images.getImageUrl()));
+							if (null != bmp) {
+								// drawView.setBackgroundBitmap(bmp, false);
+								drawView.setBackgroundBitmap(bmp, false);
+								LoadImageFilter();
+							}
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
 			}
-		}
+		});
 	}
 
 	/**

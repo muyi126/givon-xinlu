@@ -24,6 +24,7 @@ import android.widget.RelativeLayout;
 
 import com.givon.baseproject.xinlu.BaseApplication;
 import com.givon.baseproject.xinlu.R;
+import com.givon.baseproject.xinlu.entity.BannerModel;
 import com.givon.baseproject.xinlu.entity.ImageModel;
 import com.lidroid.xutils.BitmapUtils;
 
@@ -100,7 +101,7 @@ public class TopDotPager extends RelativeLayout implements OnPageChangeListener 
 		});
 	}
 
-	public void updateViews(List<ImageModel> beans) {
+	public void updateViews(List<BannerModel> beans) {
 		if (null == beans || beans.size() < 1) {
 			return;
 		}
@@ -144,9 +145,9 @@ public class TopDotPager extends RelativeLayout implements OnPageChangeListener 
 
 	class MyPagerAdapter extends PagerAdapter {
 		private Context mContext;
-		private List<ImageModel> mBeans;
+		private List<BannerModel> mBeans;
 
-		public MyPagerAdapter(Context context, List<ImageModel> beans) {
+		public MyPagerAdapter(Context context, List<BannerModel> beans) {
 			this.mContext = context;
 			this.mBeans = beans;
 		}
@@ -158,7 +159,7 @@ public class TopDotPager extends RelativeLayout implements OnPageChangeListener 
 
 		@Override
 		public Object instantiateItem(ViewGroup container, int position) {
-			ImageModel bean = mBeans.get(position);
+			BannerModel model = mBeans.get(position);
 			ImageView image = new ImageView(mContext);
 			ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT,
 					BaseApplication.mWidth / 8);
@@ -186,7 +187,7 @@ public class TopDotPager extends RelativeLayout implements OnPageChangeListener 
 				}
 			});
 			if (null != mBitmapUtils) {
-				mBitmapUtils.display(image, bean.getImageUrl());
+				mBitmapUtils.display(image, model.getBannerImage());
 			}
 
 			container.addView(image);
@@ -203,7 +204,7 @@ public class TopDotPager extends RelativeLayout implements OnPageChangeListener 
 			return arg0 == arg1;
 		}
 
-		public List<ImageModel> getList() {
+		public List<BannerModel> getList() {
 			return mBeans;
 		}
 

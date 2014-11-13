@@ -1,6 +1,6 @@
 /* 
- * Copyright 2014 ShangDao.Ltd  All rights reserved.
- * SiChuan ShangDao.Ltd PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright 2014 JiaJun.Ltd  All rights reserved.
+ * SiChuan JiaJun.Ltd PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  * 
  * @FraHome.java  2014年10月16日 上午9:12:57 - Guzhu
  * @author Guzhu
@@ -53,6 +53,7 @@ import com.givon.baseproject.xinlu.view.MyViewPager;
 import com.givon.baseproject.xinlu.view.RefreshableView;
 import com.givon.baseproject.xinlu.view.RefreshableView.RefreshListener;
 import com.givon.baseproject.xinlu.view.TopDotPager;
+import com.lidroid.xutils.BitmapUtils;
 
 /**
  * 首页
@@ -99,6 +100,7 @@ public class FraHome extends BaseFragment implements ViewPageTopListener,OnClick
 		mTv_SearchView.setOnClickListener(this);
 		mTopBarLayout_Jiadi = (LinearLayout) view.findViewById(R.id.ly_top_bar_jiadi);
 		mDotPager = (TopDotPager) view.findViewById(R.id.topDotPager);
+		mDotPager.setmBitmapUtils(new BitmapUtils(getActivity()));
 		mMyScrollView = (MyScrollView) view.findViewById(R.id.sv_ScrollView);
 		InitWidth(view);
 		InitTextView(view);
@@ -311,7 +313,7 @@ public class FraHome extends BaseFragment implements ViewPageTopListener,OnClick
 				mRefreshableView.finishRefresh();
 				BannerEntity entity = (BannerEntity) obj;
 				if(null!=entity&&null!=entity.getData()&&entity.getData().size()>0){
-					
+					mDotPager.updateViews(entity.getData());
 				}
 			}
 			

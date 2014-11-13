@@ -1,6 +1,6 @@
 ///* 
-// * Copyright 2014 ShangDao.Ltd  All rights reserved.
-// * SiChuan ShangDao.Ltd PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+// * Copyright 2014 JiaJun.Ltd  All rights reserved.
+// * SiChuan JiaJun.Ltd PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
 // * 
 // * @DDC.java  2014年11月10日 下午8:13:47 - Guzhu
 // * @author Guzhu
