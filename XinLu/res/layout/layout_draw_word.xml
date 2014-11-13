@@ -8,21 +8,23 @@
     <include layout="@layout/layout_draw_titlbar" />
 
     <RelativeLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
         <com.givon.baseproject.xinlu.view.DrawView
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/drawview"
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent" >
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/ly_button"
+            android:layout_centerHorizontal="true" >
         </com.givon.baseproject.xinlu.view.DrawView>
 
         <LinearLayout
             android:id="@+id/drawbottom"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
+            android:layout_above="@+id/ly_button"
             android:orientation="vertical" >
 
             <FrameLayout
@@ -113,48 +115,48 @@
                     <com.givon.util.colorpicker.ColorPickerView
                         android:id="@+id/graphiccolorview"
                         android:layout_width="match_parent"
-                        android:layout_gravity="center"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center" />
                 </LinearLayout>
             </FrameLayout>
+        </LinearLayout>
 
-            <LinearLayout
+        <LinearLayout
+            android:id="@+id/ly_button"
+            android:layout_width="match_parent"
+            android:layout_height="50dip"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/tv_texttype"
                 android:layout_width="match_parent"
-                android:layout_height="50dip"
-                android:orientation="horizontal" >
+                android:layout_height="40dip"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="字体" >
+            </TextView>
 
-                <TextView
-                    android:id="@+id/tv_texttype"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dip"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="字体" >
-                </TextView>
+            <TextView
+                android:id="@+id/tv_textcolor"
+                android:layout_width="match_parent"
+                android:layout_height="40dip"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="颜色" >
+            </TextView>
 
-                <TextView
-                    android:id="@+id/tv_textcolor"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dip"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="颜色" >
-                </TextView>
-
-                <TextView
-                    android:id="@+id/tv_bianji"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dip"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="编辑" >
-                </TextView>
-            </LinearLayout>
-
-            
+            <TextView
+                android:id="@+id/tv_bianji"
+                android:layout_width="match_parent"
+                android:layout_height="40dip"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="编辑" >
+            </TextView>
         </LinearLayout>
     </RelativeLayout>
 

@@ -1,6 +1,6 @@
 /* 
- * Copyright 2014 ShangDao.Ltd  All rights reserved.
- * SiChuan ShangDao.Ltd PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright 2014 JiaJun.Ltd  All rights reserved.
+ * SiChuan JiaJun.Ltd PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  * 
  * @UploadMoreImageTask.java  2014年9月23日 下午4:03:22 - Guzhu
  * @author Guzhu

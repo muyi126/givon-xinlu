@@ -1,6 +1,6 @@
 /* 
- * Copyright 2014 ShangDao.Ltd  All rights reserved.
- * SiChuan ShangDao.Ltd PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright 2014 JiaJun.Ltd  All rights reserved.
+ * SiChuan JiaJun.Ltd PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  * 
  * @CrashHandler.java  2014年5月4日 下午4:40:04 - Guzhu
  * @author Guzhu

@@ -1,6 +1,6 @@
 /* 
- * Copyright 2014 ShangDao.Ltd  All rights reserved.
- * SiChuan ShangDao.Ltd PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright 2014 JiaJun.Ltd  All rights reserved.
+ * SiChuan JiaJun.Ltd PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  * 
  * @MySetPassWordEditView.java  2014年10月21日 下午2:14:04 - Guzhu
  * @author Guzhu

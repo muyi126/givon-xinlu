@@ -1,6 +1,6 @@
 /* 
- * Copyright 2013 ShangDao.Ltd  All rights reserved.
- * SiChuan ShangDao.Ltd PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright 2013 JiaJun.Ltd  All rights reserved.
+ * SiChuan JiaJun.Ltd PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  * 
  * @PullListViewFooter.java  2013-12-11 9:18:06 - Carson
  * @author YanXu

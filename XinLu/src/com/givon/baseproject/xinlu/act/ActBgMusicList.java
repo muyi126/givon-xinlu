@@ -1,6 +1,6 @@
 /* 
- * Copyright 2014 ShangDao.Ltd  All rights reserved.
- * SiChuan ShangDao.Ltd PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright 2014 JiaJun.Ltd  All rights reserved.
+ * SiChuan JiaJun.Ltd PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  * 
  * @ActBgMusicList.java  2014年11月6日 下午5:18:38 - Guzhu
  * @author Guzhu

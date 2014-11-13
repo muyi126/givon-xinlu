@@ -1,6 +1,6 @@
 /* 
- * Copyright 2014 ShangDao.Ltd  All rights reserved.
- * SiChuan ShangDao.Ltd PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright 2014 JiaJun.Ltd  All rights reserved.
+ * SiChuan JiaJun.Ltd PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  * 
  * @ActWelcome.java  2014年10月21日 上午9:50:32 - Guzhu
  * @author Guzhu
@@ -69,11 +69,11 @@ public class ActWelcome extends BaseActivity {
 		@Override
 		public void run() {
 			initialDrawAttribute();
-//			if(ShareCookie.isLoginAuth()){
+			if(ShareCookie.isLoginAuth()){
 				startActivity(new Intent(getApplication(), MainActivity.class));
-//			}else {
-//				startActivity(new Intent(getApplication(), ActLogin.class));
-//			}
+			}else {
+				startActivity(new Intent(getApplication(), ActLogin.class));
+			}
 		}
 	}
 

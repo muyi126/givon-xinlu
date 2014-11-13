@@ -1,6 +1,6 @@
 /* 
- * Copyright 2014 ShangDao.Ltd  All rights reserved.
- * SiChuan ShangDao.Ltd PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright 2014 JiaJun.Ltd  All rights reserved.
+ * SiChuan JiaJun.Ltd PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  * 
  * @FraHome.java  2014年10月16日 上午9:12:57 - Guzhu
  * @author Guzhu
@@ -221,12 +221,12 @@ public class FraPublish extends BaseFragment {
 					v.setBackgroundColor(0x00ffffff);
 
 					DetailImages image = drawView.saveBitmap();
-					drawView.freeBitmaps2();
 					filesList.add(image);
 					Intent intent = new Intent(getActivity(), ActDrawWord.class);
 					intent.putExtra(Constant.DATA, image);
 					FraPublish.this.startActivityForResult(intent, PUBLISH_SHOW_DRAWWORD_RESULT);
 					drawView.setCanDraw(false);
+					drawView.freeBitmaps2();
 					break;
 				case MotionEvent.ACTION_CANCEL:
 					v.setBackgroundColor(0x00ff0000);

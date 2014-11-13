@@ -4,17 +4,18 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.drawable.BitmapDrawable;
-import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.Toast;
 
 import com.givon.baseproject.draw.util.DrawAttribute;
@@ -33,6 +34,7 @@ public class DrawView extends View implements Runnable {
 	private final int VISIBLE_BTN_WIDTH = 60;
 	private final int VISIBLE_TITLE_HEIGHT = 60;
 	private final int VISIBLE_BTN_HEIGHT = 70;
+	private ReloadingListener reloadingListener;
 
 	private enum TouchLayer {
 		GEOMETRY_LAYER, PAINT_LAYER, STICKER_BITMAP, STICKER_TEXT, STICKER_TOOL, STICKER_TEXT_TOOL, VISIBLE_BTN, NULL
@@ -61,7 +63,9 @@ public class DrawView extends View implements Runnable {
 	public DrawView(Context context, AttributeSet attributeSet) {
 		super(context, attributeSet);
 		this.context = context;
-		initView();
+		if (null == reloadingListener) {
+			initView();
+		}
 		new Thread(this).start();
 	}
 
@@ -88,6 +92,9 @@ public class DrawView extends View implements Runnable {
 		brushGestureListener = new BrushGestureListener(
 				casualStroke(R.drawable.marker, Color.BLACK), 2, null);
 		brushGestureDetector = new GestureDetector(brushGestureListener);
+		if (reloadingListener != null) {
+			reloadingListener.onReLoding();
+		}
 	}
 
 	@Override
@@ -112,7 +119,6 @@ public class DrawView extends View implements Runnable {
 
 	@Override
 	protected void onDraw(Canvas canvas) {
-		System.out.println("Ondraw");
 		super.onDraw(canvas);
 		canvas.drawColor(Color.WHITE);
 		canvas.drawBitmap(backgroundBitmap, backgroundBitmapLeftTopP.x, backgroundBitmapLeftTopP.y,
@@ -255,40 +261,35 @@ public class DrawView extends View implements Runnable {
 			float scaleWidth;
 			float scaleHeight;
 
-			// if (mWidth != 0 && mHeight != 0) {
-			//
-			// scaleWidth = bitmap.getWidth() * 1.0f / mWidth;
-			// scaleHeight = bitmap.getHeight() * 1.0f / mHeight;
-			// } else {
-			// scaleWidth = bitmap.getWidth() * 1.0f / DrawAttribute.screenWidth;
-			// scaleHeight = bitmap.getHeight() * 1.0f / DrawAttribute.screenHeight;
-			//
-			// }
-			scaleWidth = bitmap.getWidth() * 1.0f / DrawAttribute.screenWidth_out;
-			scaleHeight = bitmap.getHeight() * 1.0f / DrawAttribute.screenHeight_out;
+			if (mWidth != 0 && mHeight != 0) {
+				scaleWidth = bitmap.getWidth() * 1.0f / mWidth;
+				scaleHeight = bitmap.getHeight() * 1.0f / mHeight;
+			} else {
+				scaleWidth = bitmap.getWidth() * 1.0f / DrawAttribute.screenWidth_out;
+				scaleHeight = bitmap.getHeight() * 1.0f / DrawAttribute.screenHeight_out;
+
+			}
+
 			float scale = scaleWidth > scaleHeight ? scaleWidth : scaleHeight;
-			if (scale > 1.01)
+			if (scale > 0)
 				backgroundBitmap = Bitmap.createScaledBitmap(bitmap,
 						(int) (bitmap.getWidth() / scale), (int) (bitmap.getHeight() / scale),
 						false);
 			else {
 				backgroundBitmap = bitmap;
 			}
-			// if (mWidth != 0 && mHeight != 0) {
-			//
-			// backgroundBitmapLeftTopP.x = (mWidth - backgroundBitmap.getWidth()) / 2;
-			// backgroundBitmapLeftTopP.y = (mHeight - backgroundBitmap.getHeight()) / 2;
-			// } else {
-			//
-			// backgroundBitmapLeftTopP.x = (DrawAttribute.screenWidth - backgroundBitmap
-			// .getWidth()) / 2;
-			// backgroundBitmapLeftTopP.y = (DrawAttribute.screenHeight - backgroundBitmap
-			// .getHeight()) / 2;
-			// }
-			backgroundBitmapLeftTopP.x = (DrawAttribute.screenWidth_out - backgroundBitmap
-					.getWidth()) / 2;
-			backgroundBitmapLeftTopP.y = (DrawAttribute.screenHeight_out - backgroundBitmap
-					.getHeight()) / 2;
+			if (mWidth != 0 && mHeight != 0) {
+
+				backgroundBitmapLeftTopP.x = (mWidth - backgroundBitmap.getWidth()) / 2;
+				backgroundBitmapLeftTopP.y = (mHeight - backgroundBitmap.getHeight()) / 2;
+			} else {
+
+				backgroundBitmapLeftTopP.x = (DrawAttribute.screenWidth_out - backgroundBitmap
+						.getWidth()) / 2;
+				backgroundBitmapLeftTopP.y = (DrawAttribute.screenHeight_out - backgroundBitmap
+						.getHeight()) / 2;
+			}
+			System.out.println("BBBB:" + bitmap);
 			return bitmap;
 
 		}
@@ -557,18 +558,41 @@ public class DrawView extends View implements Runnable {
 		}
 	}
 
-//	@Override
-//	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-//		super.onSizeChanged(w, h, oldw, oldh);
-//		
-//		if(){
-//			
-//		}
-//		System.out.println("D_w:" + getWidth());
-//		System.out.println("D_H:" + getHeight());
-//		System.out.println("W:" + DrawAttribute.screenWidth_out);
-//		System.out.println("H:" + DrawAttribute.screenHeight_out);
-//	}
+	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+		System.out.println("onMeasureww:" + mWidth + " onMeasurehh:" + mHeight);
+	}
+
+	@Override
+	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+		super.onSizeChanged(w, h, oldw, oldh);
+
+		if (mWidth == 0 || mHeight == 0) {
+			int ww = getWidth();
+			int hh = getHeight();
+			int cw = ww - DrawAttribute.screenWidth_out_2;
+			int ch = hh - DrawAttribute.screenHeight_out_2;
+			if (cw < ch) {
+				mWidth = ww;
+				mHeight = (int) (ww / DrawAttribute.screenWidthSclHeight);
+			} else {
+				mHeight = hh;
+				mWidth = (int) (hh * DrawAttribute.screenWidthSclHeight);
+			}
+			System.out.println("ww:" + mWidth + " hh:" + mHeight + "  w:" + ww + " h:" + hh);
+			setMeasuredDimension(mWidth, mHeight);
+			LayoutParams parmas = getLayoutParams();
+			parmas.width = mWidth;
+			parmas.height = mHeight;
+			setLayoutParams(parmas);
+			initView();
+		}
+		System.out.println("D_w:" + getWidth());
+		System.out.println("D_H:" + getHeight());
+		System.out.println("W:" + DrawAttribute.screenWidth_out);
+		System.out.println("H:" + DrawAttribute.screenHeight_out);
+	}
 
 	public DetailImages saveBitmap() {
 		return saveBitmap(false);
@@ -580,21 +604,21 @@ public class DrawView extends View implements Runnable {
 			bitmap = Bitmap.createBitmap(DrawAttribute.screenWidth_out,
 					DrawAttribute.screenHeight_out, Bitmap.Config.ARGB_8888);
 		} else {
-			// if (mHeight != 0 && mWidth != 0) {
-			// bitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
-			// } else {
-			// bitmap = Bitmap.createBitmap(DrawAttribute.screenWidth, DrawAttribute.screenHeight,
-			// Bitmap.Config.ARGB_8888);
-			// }
-			bitmap = Bitmap.createBitmap(DrawAttribute.screenWidth_out,
-					DrawAttribute.screenHeight_out, Bitmap.Config.ARGB_8888);
+			if (mHeight != 0 && mWidth != 0) {
+				bitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.ARGB_8888);
+			} else {
+				bitmap = Bitmap.createBitmap(DrawAttribute.screenWidth_out,
+						DrawAttribute.screenHeight_out, Bitmap.Config.ARGB_8888);
+			}
 
 		}
-
+		System.out.println("mWidth:" + mWidth + " mHeight:" + mHeight);
 		Canvas canvas = new Canvas(bitmap);
 		canvas.drawColor(Color.WHITE);
-		canvas.drawBitmap(backgroundBitmap, backgroundBitmapLeftTopP.x, backgroundBitmapLeftTopP.y,
-				null);
+		if (!backgroundBitmap.isRecycled()) {
+			canvas.drawBitmap(backgroundBitmap, backgroundBitmapLeftTopP.x,
+					backgroundBitmapLeftTopP.y, null);
+		}
 		if (null != paintBitmap && !paintBitmap.isRecycled()) {
 			canvas.drawBitmap(paintBitmap, 0, 0, null);
 		}
@@ -608,7 +632,26 @@ public class DrawView extends View implements Runnable {
 		stickerBitmapList.deleteOnTouchStickerBitmap();
 		stickerBitmapListByTT.deleteOnTouchStickerBitmap();
 		setBackgroundBitmap(bitmap, false);
+		// Matrix matrix = new Matrix();
+		// float sx = bitmap.getWidth() / (float) DrawAttribute.screenWidth_out_2;
+		// float sy = bitmap.getHeight() / (float) DrawAttribute.screenHeight_out_2;
+		// matrix.setScale(sx, sy);
+		// Bitmap bm = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(),
+		// matrix, true);
+		// bitmap.recycle();
 		return StorageInSDCard.saveBitmapInExternalStorage(bitmap, context);
+	}
+
+	public interface ReloadingListener {
+		void onReLoding();
+	}
+
+	public ReloadingListener getReloadingListener() {
+		return reloadingListener;
+	}
+
+	public void setReloadingListener(ReloadingListener reloadingListener) {
+		this.reloadingListener = reloadingListener;
 	}
 
 	public void freeBitmaps() {

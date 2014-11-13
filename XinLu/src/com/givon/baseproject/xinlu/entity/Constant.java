@@ -1,6 +1,6 @@
 /* 
- * Copyright 2013 ShangDao.Ltd  All rights reserved.
- * SiChuan ShangDao.Ltd PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright 2013 JiaJun.Ltd  All rights reserved.
+ * SiChuan JiaJun.Ltd PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  * 
  * @Constant.java  2013-12-10 ����8:14:20 - Carson
  * @author YanXu
